@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Auditoría y trazabilidad de LogiTrack">
+    <title>Auditoría | LogiTrack</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <a href="index.html" class="brand">LogiTrack</a>
+            <nav class="main-nav" aria-label="Navegación principal">
+                <a href="index.html">Inicio</a>
+                <a href="bodegas.html">Bodegas</a>
+                <a href="productos.html">Productos</a>
+                <a href="movimientos.html">Movimientos</a>
+                <a href="auditoria.html" class="active">Auditoría</a>
+                <a href="usuarios.html">Usuarios</a>
+                <button type="button" id="logoutButton" class="logout-button">Cerrar sesión</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="page-header">
+            <div>
+                <h1>Auditoría del sistema</h1>
+                <p>Consulta los movimientos críticos y la trazabilidad de las operaciones.</p>
+            </div>
+            <button type="button" id="refreshAuditButton" class="primary-button">Actualizar</button>
+        </section>
+
+        <div id="pageMessage" class="alert" role="alert" aria-live="polite" hidden></div>
+
+        <section class="card" aria-labelledby="auditTitle">
+            <div class="card-header">
+                <div>
+                    <h2 id="auditTitle">Historial de operaciones</h2>
+                    <p class="text-muted">Se muestran los cambios más recientes registrados por el sistema.</p>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="usuarioFilter">Usuario</label>
+                    <input type="text" id="usuarioFilter" placeholder="Filtrar por usuario">
+                </div>
+                <div class="form-group">
+                    <label for="entidadFilter">Entidad</label>
+                    <input type="text" id="entidadFilter" placeholder="Ej. producto, bodega">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productoFilter">Producto</label>
+                    <input type="text" id="productoFilter" placeholder="Ej. Play 5, laptop">
+                </div>
+                <div class="form-group">
+                    <label for="tipoFilter">Tipo de operación</label>
+                    <select id="tipoFilter">
+                        <option value="">Todos</option>
+                        <option value="CREACION">Creación</option>
+                        <option value="ACTUALIZACION">Actualización</option>
+                        <option value="ELIMINACION">Eliminación</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Operación</th>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Entidad</th>
+                            <th scope="col">Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditoriaTableBody">
+                        <tr>
+                            <td colspan="5" class="no-data">Cargando auditoría...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/auditoria.js" defer></script>
+</body>
+</html>

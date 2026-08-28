@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Administración de usuarios de LogiTrack">
+    <title>Usuarios | LogiTrack</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <a href="index.html" class="brand">LogiTrack</a>
+            <nav class="main-nav" aria-label="Navegación principal">
+                <a href="index.html">Inicio</a>
+                <a href="bodegas.html">Bodegas</a>
+                <a href="productos.html">Productos</a>
+                <a href="movimientos.html">Movimientos</a>
+                <a href="auditoria.html">Auditoría</a>
+                <a href="usuarios.html" class="active">Usuarios</a>
+                <button type="button" id="logoutButton" class="logout-button">Cerrar sesión</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="page-header">
+            <div>
+                <h1>Gestión de usuarios</h1>
+                <p>Registra nuevos usuarios y revisa el estado del acceso del sistema.</p>
+            </div>
+            <button type="button" id="newUserButton" class="primary-button">Nuevo usuario</button>
+        </section>
+
+        <div id="pageMessage" class="alert" role="alert" aria-live="polite" hidden></div>
+
+        <section class="card" aria-labelledby="userFormTitle">
+            <div class="card-header">
+                <h2 id="userFormTitle">Registrar usuario</h2>
+            </div>
+            <form id="userForm" novalidate>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre">Nombre completo <span class="required">*</span></label>
+                        <input type="text" id="nombre" name="nombre" placeholder="Ejemplo: Ana Gómez" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Usuario <span class="required">*</span></label>
+                        <input type="text" id="username" name="username" placeholder="Ejemplo: anagomez" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password">Contraseña <span class="required">*</span></label>
+                        <input type="password" id="password" name="password" placeholder="Mínimo 8 caracteres" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rol">Rol <span class="required">*</span></label>
+                        <select id="rol" name="rol" required>
+                            <option value="">Seleccione un rol</option>
+                            <option value="ADMIN">Administrador</option>
+                            <option value="EMPLEADO">Empleado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="success-button">Guardar usuario</button>
+                    <button type="reset" class="action-button">Limpiar</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="card" aria-labelledby="userListTitle">
+            <div class="card-header">
+                <div>
+                    <h2 id="userListTitle">Usuarios registrados</h2>
+                    <p class="text-muted">Administra el acceso de personas autorizadas en la plataforma.</p>
+                </div>
+                <button type="button" id="refreshUsersButton" class="action-button">Actualizar lista</button>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Rol</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr><td colspan="4" class="no-data">Cargando usuarios...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/usuarios.js" defer></script>
+</body>
+</html>

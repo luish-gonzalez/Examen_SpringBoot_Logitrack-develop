@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Registro y consulta de movimientos de inventario de LogiTrack"
+    >
+
+    <title>Movimientos | LogiTrack</title>
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <header class="main-header">
+        <div class="header-content">
+
+            <a href="index.html" class="brand">
+                LogiTrack
+            </a>
+
+            <nav class="main-nav" aria-label="Navegación principal">
+                <a href="index.html">
+                    Inicio
+                </a>
+
+                <a href="bodegas.html">
+                    Bodegas
+                </a>
+
+                <a href="productos.html">
+                    Productos
+                </a>
+
+                <a href="movimientos.html" class="active">
+                    Movimientos
+                </a>
+
+                <a href="auditoria.html">
+                    Auditoría
+                </a>
+
+                <a href="usuarios.html">
+                    Usuarios
+                </a>
+
+                <button
+                    type="button"
+                    id="logoutButton"
+                    class="logout-button"
+                >
+                    Cerrar sesión
+                </button>
+            </nav>
+
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="page-header">
+            <div>
+                <h1>Movimientos de inventario</h1>
+
+                <p>
+                    Registra entradas, salidas y transferencias entre bodegas.
+                </p>
+            </div>
+
+            <div>
+                <span class="text-muted">
+                    Usuario responsable:
+                </span>
+
+                <strong id="currentUsername">
+                    Usuario autenticado
+                </strong>
+            </div>
+        </section>
+
+        <div
+            id="pageMessage"
+            class="alert"
+            role="alert"
+            aria-live="polite"
+            hidden
+        ></div>
+
+        <section class="card" aria-labelledby="movementFormTitle">
+
+            <div class="card-header">
+                <div>
+                    <h2 id="movementFormTitle">
+                        Registrar movimiento
+                    </h2>
+
+                    <p class="text-muted">
+                        Agrega al menos un producto antes de guardar.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="clearMovementButton"
+                    class="action-button"
+                >
+                    Limpiar movimiento
+                </button>
+            </div>
+
+            <form id="movimientoForm" novalidate>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="tipoMovimiento">
+                            Tipo de movimiento
+                            <span class="required">*</span>
+                        </label>
+
+                        <select
+                            id="tipoMovimiento"
+                            name="tipoMovimiento"
+                            required
+                            aria-describedby="tipoMovimientoError"
+                        >
+                            <option value="">
+                                Seleccione un tipo
+                            </option>
+
+                            <option value="ENTRADA">
+                                Entrada
+                            </option>
+
+                            <option value="SALIDA">
+                                Salida
+                            </option>
+
+                            <option value="TRANSFERENCIA">
+                                Transferencia
+                            </option>
+                        </select>
+
+                        <small
+                            id="tipoMovimientoError"
+                            class="field-error"
+                            aria-live="polite"
+                        ></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fechaMovimiento">
+                            Fecha y hora
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            id="fechaMovimiento"
+                            name="fechaMovimiento"
+                            disabled
+                        >
+
+                        <small class="text-muted">
+                            El backend registra la fecha definitiva del
+                            movimiento.
+                        </small>
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+
+                    <div
+                        id="bodegaOrigenGroup"
+                        class="form-group"
+                    >
+                        <label for="bodegaOrigenId">
+                            Bodega de origen
+                            <span
+                                id="bodegaOrigenRequired"
+                                class="required"
+                            >
+                                *
+                            </span>
+                        </label>
+
+                        <select
+                            id="bodegaOrigenId"
+                            name="bodegaOrigenId"
+                            aria-describedby="bodegaOrigenError"
+                        >
+                            <option value="">
+                                Seleccione la bodega de origen
+                            </option>
+                        </select>
+
+                        <small
+                            id="bodegaOrigenError"
+                            class="field-error"
+                            aria-live="polite"
+                        ></small>
+                    </div>
+
+                    <div
+                        id="bodegaDestinoGroup"
+                        class="form-group"
+                    >
+                        <label for="bodegaDestinoId">
+                            Bodega de destino
+                            <span
+                                id="bodegaDestinoRequired"
+                                class="required"
+                            >
+                                *
+                            </span>
+                        </label>
+
+                        <select
+                            id="bodegaDestinoId"
+                            name="bodegaDestinoId"
+                            aria-describedby="bodegaDestinoError"
+                        >
+                            <option value="">
+                                Seleccione la bodega de destino
+                            </option>
+                        </select>
+
+                        <small
+                            id="bodegaDestinoError"
+                            class="field-error"
+                            aria-live="polite"
+                        ></small>
+                    </div>
+
+                </div>
+
+                <div
+                    id="movementHelp"
+                    class="alert alert-info"
+                    role="status"
+                    aria-live="polite"
+                >
+                    Seleccione el tipo de movimiento para conocer las bodegas
+                    requeridas.
+                </div>
+
+                <section
+                    class="card"
+                    aria-labelledby="detailFormTitle"
+                >
+
+                    <div class="card-header">
+                        <div>
+                            <h2 id="detailFormTitle">
+                                Agregar producto
+                            </h2>
+
+                            <p class="text-muted">
+                                Cada cantidad debe ser mayor que cero.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+                            <label for="productoId">
+                                Producto
+                                <span class="required">*</span>
+                            </label>
+
+                            <select
+                                id="productoId"
+                                name="productoId"
+                                aria-describedby="productoError"
+                            >
+                                <option value="">
+                                    Seleccione un producto
+                                </option>
+                            </select>
+
+                            <small
+                                id="productoError"
+                                class="field-error"
+                                aria-live="polite"
+                            ></small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cantidad">
+                                Cantidad
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="number"
+                                id="cantidad"
+                                name="cantidad"
+                                placeholder="Ejemplo: 10"
+                                min="1"
+                                step="1"
+                                aria-describedby="cantidadError"
+                            >
+
+                            <small
+                                id="cantidadError"
+                                class="field-error"
+                                aria-live="polite"
+                            ></small>
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="button"
+                            id="addDetailButton"
+                            class="secondary-button"
+                        >
+                            Agregar producto
+                        </button>
+
+                        <button
+                            type="button"
+                            id="clearDetailButton"
+                            class="action-button"
+                        >
+                            Limpiar producto
+                        </button>
+
+                    </div>
+
+                </section>
+
+                <section aria-labelledby="selectedProductsTitle">
+
+                    <div class="card-header">
+                        <div>
+                            <h2 id="selectedProductsTitle">
+                                Productos del movimiento
+                            </h2>
+
+                            <p
+                                id="detailsCounter"
+                                class="text-muted"
+                                aria-live="polite"
+                            >
+                                Productos agregados: 0
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Producto</th>
+                                    <th scope="col">Categoría</th>
+                                    <th scope="col">Cantidad</th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="movementDetailsTableBody">
+
+                                <tr>
+                                    <td colspan="4" class="no-data">
+                                        No se han agregado productos al
+                                        movimiento.
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <small
+                        id="detallesError"
+                        class="field-error"
+                        aria-live="polite"
+                    ></small>
+
+                </section>
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        id="saveMovementButton"
+                        class="success-button"
+                    >
+                        Registrar movimiento
+                    </button>
+
+                    <button
+                        type="button"
+                        id="cancelMovementButton"
+                        class="secondary-button"
+                    >
+                        Cancelar
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <section class="card" aria-labelledby="movementsListTitle">
+
+            <div class="card-header">
+                <div>
+                    <h2 id="movementsListTitle">
+                        Movimientos registrados
+                    </h2>
+
+                    <p class="text-muted">
+                        Consulta los movimientos y aplica filtros.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="refreshMovementsButton"
+                    class="action-button"
+                >
+                    Actualizar lista
+                </button>
+            </div>
+
+            <form id="movementFiltersForm">
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="typeFilter">
+                            Tipo de movimiento
+                        </label>
+
+                        <select
+                            id="typeFilter"
+                            name="typeFilter"
+                        >
+                            <option value="">
+                                Todos los tipos
+                            </option>
+
+                            <option value="ENTRADA">
+                                Entrada
+                            </option>
+
+                            <option value="SALIDA">
+                                Salida
+                            </option>
+
+                            <option value="TRANSFERENCIA">
+                                Transferencia
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="warehouseFilter">
+                            Bodega relacionada
+                        </label>
+
+                        <select
+                            id="warehouseFilter"
+                            name="warehouseFilter"
+                        >
+                            <option value="">
+                                Todas las bodegas
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="startDateFilter">
+                            Fecha inicial
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            id="startDateFilter"
+                            name="startDateFilter"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endDateFilter">
+                            Fecha final
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            id="endDateFilter"
+                            name="endDateFilter"
+                        >
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="productSearchFilter">
+                            Buscar producto
+                        </label>
+
+                        <input
+                            type="search"
+                            id="productSearchFilter"
+                            name="productSearchFilter"
+                            placeholder="Nombre del producto"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="responsibleSearchFilter">
+                            Buscar responsable
+                        </label>
+
+                        <input
+                            type="search"
+                            id="responsibleSearchFilter"
+                            name="responsibleSearchFilter"
+                            placeholder="Nombre o usuario responsable"
+                        >
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        id="applyFiltersButton"
+                        class="secondary-button"
+                    >
+                        Aplicar filtros
+                    </button>
+
+                    <button
+                        type="reset"
+                        id="clearFiltersButton"
+                        class="action-button"
+                    >
+                        Limpiar filtros
+                    </button>
+
+                </div>
+
+            </form>
+
+            <div class="table-container">
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Responsable</th>
+                            <th scope="col">Origen</th>
+                            <th scope="col">Destino</th>
+                            <th scope="col">Productos</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="movementsTableBody">
+
+                        <tr>
+                            <td colspan="8" class="no-data">
+                                Cargando movimientos...
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <p
+                id="movementsCounter"
+                class="text-muted"
+                aria-live="polite"
+            >
+                Movimientos mostrados: 0
+            </p>
+
+        </section>
+
+        <section class="card" aria-labelledby="movementSummaryTitle">
+
+            <div class="card-header">
+                <h2 id="movementSummaryTitle">
+                    Resumen de movimientos
+                </h2>
+            </div>
+
+            <div class="grid grid-three-columns">
+
+                <article class="summary-card">
+                    <h3>Entradas</h3>
+
+                    <p
+                        id="summaryEntries"
+                        class="summary-value"
+                    >
+                        0
+                    </p>
+                </article>
+
+                <article class="summary-card">
+                    <h3>Salidas</h3>
+
+                    <p
+                        id="summaryOutputs"
+                        class="summary-value"
+                    >
+                        0
+                    </p>
+                </article>
+
+                <article class="summary-card">
+                    <h3>Transferencias</h3>
+
+                    <p
+                        id="summaryTransfers"
+                        class="summary-value"
+                    >
+                        0
+                    </p>
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <div
+        id="movementDetailModal"
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="movementDetailModalTitle"
+        hidden
+    >
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 id="movementDetailModalTitle">
+                    Detalle del movimiento
+                </h2>
+
+                <button
+                    type="button"
+                    id="closeMovementDetailModalButton"
+                    class="close-button"
+                    aria-label="Cerrar detalle del movimiento"
+                >
+                    &times;
+                </button>
+            </div>
+
+            <div class="grid grid-two-columns">
+
+                <div>
+                    <strong>ID:</strong>
+                    <span id="detailMovementId">--</span>
+                </div>
+
+                <div>
+                    <strong>Fecha:</strong>
+                    <span id="detailMovementDate">--</span>
+                </div>
+
+                <div>
+                    <strong>Tipo:</strong>
+                    <span id="detailMovementType">--</span>
+                </div>
+
+                <div>
+                    <strong>Responsable:</strong>
+                    <span id="detailMovementResponsible">--</span>
+                </div>
+
+                <div>
+                    <strong>Bodega de origen:</strong>
+                    <span id="detailMovementOrigin">--</span>
+                </div>
+
+                <div>
+                    <strong>Bodega de destino:</strong>
+                    <span id="detailMovementDestination">--</span>
+                </div>
+
+            </div>
+
+            <div class="table-container">
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Cantidad</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="movementDetailModalTableBody">
+
+                        <tr>
+                            <td colspan="2" class="no-data">
+                                Sin productos para mostrar.
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    id="closeMovementDetailButton"
+                    class="secondary-button"
+                >
+                    Cerrar
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <p>
+            LogiTrack S.A. — Gestión de bodegas e inventario
+        </p>
+    </footer>
+
+    <noscript>
+        <div class="noscript-message">
+            JavaScript debe estar habilitado para registrar y consultar
+            movimientos.
+        </div>
+    </noscript>
+
+    <script src="js/movimientos.js" defer></script>
+</body>
+</html>

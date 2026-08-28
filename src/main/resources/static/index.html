@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Panel principal del sistema de gestión de bodegas LogiTrack"
+    >
+
+    <title>Inicio | LogiTrack</title>
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <header class="main-header">
+        <div class="header-content">
+
+            <a href="index.html" class="brand">
+                LogiTrack
+            </a>
+
+            <nav class="main-nav" aria-label="Navegación principal">
+                <a href="index.html" class="active">
+                    Inicio
+                </a>
+
+                <a href="bodegas.html">
+                    Bodegas
+                </a>
+
+                <a href="productos.html">
+                    Productos
+                </a>
+
+                <a href="movimientos.html">
+                    Movimientos
+                </a>
+
+                <a href="auditoria.html">
+                    Auditoría
+                </a>
+
+                <a href="usuarios.html" id="navUsuarios" style="display: none;">
+                    Usuarios
+                </a>
+
+                <button
+                    type="button"
+                    id="logoutButton"
+                    class="logout-button"
+                >
+                    Cerrar sesión
+                </button>
+            </nav>
+
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="page-header">
+            <div>
+                <h1>Panel principal</h1>
+
+                <p>
+                    Gestión de bodegas, productos y movimientos de inventario.
+                </p>
+            </div>
+
+            <div>
+                <span class="text-muted">
+                    Usuario:
+                </span>
+
+                <strong id="currentUsername">
+                    Usuario autenticado
+                </strong>
+            </div>
+        </section>
+
+        <div
+            id="pageMessage"
+            class="alert"
+            role="alert"
+            aria-live="polite"
+            hidden
+        ></div>
+
+        <section aria-labelledby="summaryTitle">
+            <div class="card-header">
+                <h2 id="summaryTitle">
+                    Resumen del sistema
+                </h2>
+            </div>
+
+            <div class="grid grid-three-columns">
+
+                <article class="summary-card">
+                    <h3>Bodegas registradas</h3>
+
+                    <p
+                        id="totalBodegas"
+                        class="summary-value"
+                    >
+                        --
+                    </p>
+
+                    <a href="bodegas.html">
+                        Administrar bodegas
+                    </a>
+                </article>
+
+                <article class="summary-card">
+                    <h3>Productos registrados</h3>
+
+                    <p
+                        id="totalProductos"
+                        class="summary-value"
+                    >
+                        --
+                    </p>
+
+                    <a href="productos.html">
+                        Administrar productos
+                    </a>
+                </article>
+
+                <article class="summary-card">
+                    <h3>Movimientos registrados</h3>
+
+                    <p
+                        id="totalMovimientos"
+                        class="summary-value"
+                    >
+                        --
+                    </p>
+
+                    <a href="movimientos.html">
+                        Consultar movimientos
+                    </a>
+                </article>
+
+            </div>
+        </section>
+
+        <section class="card" aria-labelledby="modulesTitle">
+
+            <div class="card-header">
+                <h2 id="modulesTitle">
+                    Módulos principales
+                </h2>
+            </div>
+
+            <div class="grid grid-three-columns">
+
+                <article class="card">
+                    <h2>Gestión de bodegas</h2>
+
+                    <p>
+                        Registra, consulta, actualiza y elimina las bodegas
+                        administradas por LogiTrack.
+                    </p>
+
+                    <p>
+                        Cada bodega puede almacenar su nombre, ubicación,
+                        capacidad y usuario encargado.
+                    </p>
+
+                    <div class="form-actions">
+                        <a
+                            href="bodegas.html"
+                            class="secondary-button"
+                        >
+                            Ir a bodegas
+                        </a>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <h2>Gestión de productos</h2>
+
+                    <p>
+                        Administra los datos generales de los productos
+                        disponibles en el sistema.
+                    </p>
+
+                    <p>
+                        El stock se controla por cada bodega mediante los
+                        registros de inventario.
+                    </p>
+
+                    <div class="form-actions">
+                        <a
+                            href="productos.html"
+                            class="secondary-button"
+                        >
+                            Ir a productos
+                        </a>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <h2>Movimientos de inventario</h2>
+
+                    <p>
+                        Registra entradas, salidas y transferencias de productos
+                        entre las bodegas.
+                    </p>
+
+                    <p>
+                        Cada movimiento conserva la fecha, el usuario
+                        responsable, las bodegas involucradas y las cantidades.
+                    </p>
+
+                    <div class="form-actions">
+                        <a
+                            href="movimientos.html"
+                            class="secondary-button"
+                        >
+                            Ir a movimientos
+                        </a>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <section class="card" aria-labelledby="securityTitle">
+
+            <div class="card-header">
+                <h2 id="securityTitle">
+                    Seguridad y trazabilidad
+                </h2>
+            </div>
+
+            <p>
+                Las solicitudes protegidas del sistema deben enviar el token
+                JWT obtenido durante el inicio de sesión.
+            </p>
+
+            <p>
+                Las operaciones realizadas por los usuarios pueden registrarse
+                mediante el módulo de auditoría para conservar la trazabilidad
+                de los cambios.
+            </p>
+
+        </section>
+
+    </main>
+
+    <footer class="main-footer">
+        <p>
+            LogiTrack S.A. — Sistema de gestión de bodegas e inventario
+        </p>
+    </footer>
+
+    <noscript>
+        <div class="noscript-message">
+            JavaScript debe estar habilitado para utilizar LogiTrack.
+        </div>
+    </noscript>
+
+    <script src="js/dashboard.js" defer></script>
+
+</body>
+</html>

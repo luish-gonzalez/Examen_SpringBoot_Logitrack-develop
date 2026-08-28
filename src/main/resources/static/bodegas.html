@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Gestión de bodegas del sistema LogiTrack"
+    >
+
+    <title>Bodegas | LogiTrack</title>
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <header class="main-header">
+        <div class="header-content">
+
+            <a href="index.html" class="brand">
+                LogiTrack
+            </a>
+
+            <nav class="main-nav" aria-label="Navegación principal">
+                <a href="index.html">
+                    Inicio
+                </a>
+
+                <a href="bodegas.html" class="active">
+                    Bodegas
+                </a>
+
+                <a href="productos.html">
+                    Productos
+                </a>
+
+                <a href="movimientos.html">
+                    Movimientos
+                </a>
+
+                <a href="auditoria.html">
+                    Auditoría
+                </a>
+
+                <a href="usuarios.html">
+                    Usuarios
+                </a>
+
+                <button
+                    type="button"
+                    id="logoutButton"
+                    class="logout-button"
+                >
+                    Cerrar sesión
+                </button>
+            </nav>
+
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="page-header">
+            <div>
+                <h1>Gestión de bodegas</h1>
+
+                <p>
+                    Registra y administra las bodegas disponibles en LogiTrack.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                id="newBodegaButton"
+                class="primary-button"
+            >
+                Nueva bodega
+            </button>
+        </section>
+
+        <div
+            id="pageMessage"
+            class="alert"
+            role="alert"
+            aria-live="polite"
+            hidden
+        ></div>
+
+        <section class="card" aria-labelledby="formTitle">
+
+            <div class="card-header">
+                <h2 id="formTitle">
+                    Registrar bodega
+                </h2>
+            </div>
+
+            <form id="bodegaForm" novalidate>
+
+                <input
+                    type="hidden"
+                    id="bodegaId"
+                    name="bodegaId"
+                >
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="nombre">
+                            Nombre
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="nombre"
+                            placeholder="Ejemplo: Bodega Central"
+                            minlength="2"
+                            maxlength="100"
+                            required
+                            aria-describedby="nombreError"
+                        >
+
+                        <small
+                            id="nombreError"
+                            class="field-error"
+                            aria-live="polite"
+                        ></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ubicacion">
+                            Ubicación
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="ubicacion"
+                            name="ubicacion"
+                            placeholder="Ejemplo: Bogotá"
+                            minlength="2"
+                            maxlength="150"
+                            required
+                            aria-describedby="ubicacionError"
+                        >
+
+                        <small
+                            id="ubicacionError"
+                            class="field-error"
+                            aria-live="polite"
+                        ></small>
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="capacidad">
+                            Capacidad
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                            type="number"
+                            id="capacidad"
+                            name="capacidad"
+                            placeholder="Ejemplo: 5000"
+                            min="1"
+                            step="1"
+                            required
+                            aria-describedby="capacidadError"
+                        >
+
+                        <small
+                            id="capacidadError"
+                            class="field-error"
+                            aria-live="polite"
+                        ></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="encargadoId">
+                            Encargado
+                            <span class="required">*</span>
+                        </label>
+
+                        <select
+                            id="encargadoId"
+                            name="encargadoId"
+                            required
+                            aria-describedby="encargadoError"
+                        >
+                            <option value="">
+                                Seleccione un encargado
+                            </option>
+                        </select>
+
+                        <small
+                            id="encargadoError"
+                            class="field-error"
+                            aria-live="polite"
+                        ></small>
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        id="saveBodegaButton"
+                        class="success-button"
+                    >
+                        Guardar bodega
+                    </button>
+
+                    <button
+                        type="button"
+                        id="cancelEditButton"
+                        class="secondary-button"
+                        hidden
+                    >
+                        Cancelar edición
+                    </button>
+
+                    <button
+                        type="reset"
+                        id="clearFormButton"
+                        class="action-button"
+                    >
+                        Limpiar formulario
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <section class="card" aria-labelledby="listTitle">
+
+            <div class="card-header">
+                <div>
+                    <h2 id="listTitle">
+                        Bodegas registradas
+                    </h2>
+
+                    <p class="text-muted">
+                        Consulta y administra las bodegas almacenadas.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="refreshBodegasButton"
+                    class="action-button"
+                >
+                    Actualizar lista
+                </button>
+            </div>
+
+            <div class="form-row">
+
+                <div class="form-group">
+                    <label for="searchBodega">
+                        Buscar bodega
+                    </label>
+
+                    <input
+                        type="search"
+                        id="searchBodega"
+                        name="searchBodega"
+                        placeholder="Buscar por nombre o ubicación"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="capacityFilter">
+                        Capacidad mínima
+                    </label>
+
+                    <input
+                        type="number"
+                        id="capacityFilter"
+                        name="capacityFilter"
+                        placeholder="Ejemplo: 100"
+                        min="0"
+                        step="1"
+                    >
+                </div>
+
+            </div>
+
+            <div class="table-container">
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Ubicación</th>
+                            <th scope="col">Capacidad</th>
+                            <th scope="col">Encargado</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="bodegasTableBody">
+
+                        <tr id="loadingRow">
+                            <td colspan="6" class="no-data">
+                                Cargando bodegas...
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <p
+                id="bodegasCounter"
+                class="text-muted"
+                aria-live="polite"
+            >
+                Total de bodegas: 0
+            </p>
+
+        </section>
+
+        <section class="card" aria-labelledby="stockTitle">
+            <div class="card-header">
+                <div>
+                    <h2 id="stockTitle">Stock por bodega</h2>
+                    <p class="text-muted">Consulta la disponibilidad de productos en cada bodega.</p>
+                </div>
+                <div class="form-group" style="min-width: 240px; margin-bottom: 0;">
+                    <label for="bodegaStockFilter">Seleccionar bodega</label>
+                    <select id="bodegaStockFilter">
+                        <option value="">Todas las bodegas</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Bodega</th>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stockTableBody">
+                        <tr><td colspan="3" class="no-data">Cargando stock...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="card" aria-labelledby="capacityTitle">
+
+            <div class="card-header">
+                <h2 id="capacityTitle">
+                    Información de capacidad
+                </h2>
+            </div>
+
+            <div class="grid grid-three-columns">
+
+                <article class="summary-card">
+                    <h3>Total de bodegas</h3>
+
+                    <p
+                        id="summaryTotalBodegas"
+                        class="summary-value"
+                    >
+                        0
+                    </p>
+                </article>
+
+                <article class="summary-card">
+                    <h3>Capacidad total</h3>
+
+                    <p
+                        id="summaryTotalCapacity"
+                        class="summary-value"
+                    >
+                        0
+                    </p>
+                </article>
+
+                <article class="summary-card">
+                    <h3>Capacidad promedio</h3>
+
+                    <p
+                        id="summaryAverageCapacity"
+                        class="summary-value"
+                    >
+                        0
+                    </p>
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <div
+        id="deleteModal"
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="deleteModalTitle"
+        hidden
+    >
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 id="deleteModalTitle">
+                    Confirmar eliminación
+                </h2>
+
+                <button
+                    type="button"
+                    id="closeDeleteModalButton"
+                    class="close-button"
+                    aria-label="Cerrar ventana"
+                >
+                    &times;
+                </button>
+            </div>
+
+            <p>
+                ¿Está seguro de que desea eliminar la bodega
+                <strong id="deleteBodegaName"></strong>?
+            </p>
+
+            <p class="text-danger">
+                Esta operación no se puede deshacer.
+            </p>
+
+            <input
+                type="hidden"
+                id="deleteBodegaId"
+            >
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    id="confirmDeleteButton"
+                    class="danger-button"
+                >
+                    Eliminar
+                </button>
+
+                <button
+                    type="button"
+                    id="cancelDeleteButton"
+                    class="secondary-button"
+                >
+                    Cancelar
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <p>
+            LogiTrack S.A. — Gestión de bodegas e inventario
+        </p>
+    </footer>
+
+    <noscript>
+        <div class="noscript-message">
+            JavaScript debe estar habilitado para administrar las bodegas.
+        </div>
+    </noscript>
+
+    <script src="js/bodegas.js" defer></script>
+</body>
+</html>

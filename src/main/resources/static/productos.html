@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Gestión de productos del sistema LogiTrack"
+    >
+
+    <title>Productos | LogiTrack</title>
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <header class="main-header">
+        <div class="header-content">
+
+            <a href="index.html" class="brand">
+                LogiTrack
+            </a>
+
+            <nav class="main-nav" aria-label="Navegación principal">
+                <a href="index.html">
+                    Inicio
+                </a>
+
+                <a href="bodegas.html">
+                    Bodegas
+                </a>
+
+                <a href="productos.html" class="active">
+                    Productos
+                </a>
+
+                <a href="movimientos.html">
+                    Movimientos
+                </a>
+
+                <a href="auditoria.html">
+                    Auditoría
+                </a>
+
+                <a href="usuarios.html">
+                    Usuarios
+                </a>
+
+                <button
+                    type="button"
+                    id="logoutButton"
+                    class="logout-button"
+                >
+                    Cerrar sesión
+                </button>
+            </nav>
+
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="page-header">
+            <div>
+                <h1>Gestión de productos</h1>
+
+                <p>
+                    Registra y administra los productos disponibles en
+                    LogiTrack.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                id="newProductoButton"
+                class="primary-button"
+            >
+                Nuevo producto
+            </button>
+        </section>
+
+        <div
+            id="pageMessage"
+            class="alert"
+            role="alert"
+            aria-live="polite"
+            hidden
+        ></div>
+
+        <section class="card" aria-labelledby="formTitle">
+
+            <div class="card-header">
+                <h2 id="formTitle">
+                    Registrar producto
+                </h2>
+            </div>
+
+            <form id="productoForm" novalidate>
+
+                <input
+                    type="hidden"
+                    id="productoId"
+                    name="productoId"
+                >
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="nombre">
+                            Nombre
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="nombre"
+                            placeholder="Ejemplo: Computador portátil"
+                            minlength="2"
+                            maxlength="100"
+                            required
+                            aria-describedby="nombreError"
+                        >
+
+                        <small
+                            id="nombreError"
+                            class="field-error"
+                            aria-live="polite"
+                        ></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoria">
+                            Categoría
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="categoria"
+                            name="categoria"
+                            placeholder="Ejemplo: Tecnología"
+                            minlength="2"
+                            maxlength="100"
+                            required
+                            list="categoriasSugeridas"
+                            aria-describedby="categoriaError"
+                        >
+
+                        <datalist id="categoriasSugeridas">
+                            <option value="Tecnología"></option>
+                            <option value="Oficina"></option>
+                            <option value="Alimentos"></option>
+                            <option value="Aseo"></option>
+                            <option value="Herramientas"></option>
+                            <option value="Muebles"></option>
+                        </datalist>
+
+                        <small
+                            id="categoriaError"
+                            class="field-error"
+                            aria-live="polite"
+                        ></small>
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="precio">
+                            Precio
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                            type="number"
+                            id="precio"
+                            name="precio"
+                            placeholder="Ejemplo: 125000.00"
+                            min="0.01"
+                            step="0.01"
+                            required
+                            aria-describedby="precioError"
+                        >
+
+                        <small
+                            id="precioError"
+                            class="field-error"
+                            aria-live="polite"
+                        ></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="precioFormateado">
+                            Vista previa del precio
+                        </label>
+
+                        <input
+                            type="text"
+                            id="precioFormateado"
+                            name="precioFormateado"
+                            value="$ 0"
+                            disabled
+                        >
+                    </div>
+
+                </div>
+
+                <div class="alert alert-info">
+                    El stock no se registra directamente en el producto.
+                    Las existencias se administran por cada bodega mediante
+                    el módulo de inventario y los movimientos.
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        id="saveProductoButton"
+                        class="success-button"
+                    >
+                        Guardar producto
+                    </button>
+
+                    <button
+                        type="button"
+                        id="cancelEditButton"
+                        class="secondary-button"
+                        hidden
+                    >
+                        Cancelar edición
+                    </button>
+
+                    <button
+                        type="reset"
+                        id="clearFormButton"
+                        class="action-button"
+                    >
+                        Limpiar formulario
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <section class="card" aria-labelledby="listTitle">
+
+            <div class="card-header">
+                <div>
+                    <h2 id="listTitle">
+                        Productos registrados
+                    </h2>
+
+                    <p class="text-muted">
+                        Consulta y administra la información general de los
+                        productos.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="refreshProductosButton"
+                    class="action-button"
+                >
+                    Actualizar lista
+                </button>
+            </div>
+
+            <div class="form-row">
+
+                <div class="form-group">
+                    <label for="searchProducto">
+                        Buscar producto
+                    </label>
+
+                    <input
+                        type="search"
+                        id="searchProducto"
+                        name="searchProducto"
+                        placeholder="Buscar por nombre o categoría"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="categoryFilter">
+                        Filtrar por categoría
+                    </label>
+
+                    <select
+                        id="categoryFilter"
+                        name="categoryFilter"
+                    >
+                        <option value="">
+                            Todas las categorías
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-row">
+
+                <div class="form-group">
+                    <label for="minimumPriceFilter">
+                        Precio mínimo
+                    </label>
+
+                    <input
+                        type="number"
+                        id="minimumPriceFilter"
+                        name="minimumPriceFilter"
+                        placeholder="0"
+                        min="0"
+                        step="0.01"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="maximumPriceFilter">
+                        Precio máximo
+                    </label>
+
+                    <input
+                        type="number"
+                        id="maximumPriceFilter"
+                        name="maximumPriceFilter"
+                        placeholder="Sin límite"
+                        min="0"
+                        step="0.01"
+                    >
+                </div>
+
+            </div>
+
+            <div class="table-container">
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Categoría</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Stock</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="productosTableBody">
+
+                        <tr id="loadingRow">
+                            <td colspan="5" class="no-data">
+                                Cargando productos...
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <p
+                id="productosCounter"
+                class="text-muted"
+                aria-live="polite"
+            >
+                Total de productos: 0
+            </p>
+
+        </section>
+
+        <section class="card" aria-labelledby="summaryTitle">
+
+            <div class="card-header">
+                <h2 id="summaryTitle">
+                    Resumen de productos
+                </h2>
+            </div>
+
+            <div class="grid grid-three-columns">
+
+                <article class="summary-card">
+                    <h3>Total de productos</h3>
+
+                    <p
+                        id="summaryTotalProductos"
+                        class="summary-value"
+                    >
+                        0
+                    </p>
+                </article>
+
+                <article class="summary-card">
+                    <h3>Total de categorías</h3>
+
+                    <p
+                        id="summaryTotalCategorias"
+                        class="summary-value"
+                    >
+                        0
+                    </p>
+                </article>
+
+                <article class="summary-card">
+                    <h3>Precio promedio</h3>
+
+                    <p
+                        id="summaryAveragePrice"
+                        class="summary-value"
+                    >
+                        $ 0
+                    </p>
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <div
+        id="deleteModal"
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="deleteModalTitle"
+        hidden
+    >
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 id="deleteModalTitle">
+                    Confirmar eliminación
+                </h2>
+
+                <button
+                    type="button"
+                    id="closeDeleteModalButton"
+                    class="close-button"
+                    aria-label="Cerrar ventana"
+                >
+                    &times;
+                </button>
+            </div>
+
+            <p>
+                ¿Está seguro de que desea eliminar el producto
+                <strong id="deleteProductoName"></strong>?
+            </p>
+
+            <p class="text-danger">
+                Esta operación no se puede deshacer.
+            </p>
+
+            <input
+                type="hidden"
+                id="deleteProductoId"
+            >
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    id="confirmDeleteButton"
+                    class="danger-button"
+                >
+                    Eliminar
+                </button>
+
+                <button
+                    type="button"
+                    id="cancelDeleteButton"
+                    class="secondary-button"
+                >
+                    Cancelar
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <p>
+            LogiTrack S.A. — Gestión de bodegas e inventario
+        </p>
+    </footer>
+
+    <noscript>
+        <div class="noscript-message">
+            JavaScript debe estar habilitado para administrar los productos.
+        </div>
+    </noscript>
+
+    <script src="js/productos.js" defer></script>
+</body>
+</html>
