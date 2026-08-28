@@ -53,11 +53,11 @@ Este documento se completa únicamente con ejecuciones y hashes reales. `PENDIEN
 
 ## 5. Evidencia roja
 
-- Fecha/hora: `PENDIENTE`.
-- Commit o árbol de trabajo probado: `PENDIENTE`.
-- Comando ejecutado: `PENDIENTE`.
-- Pruebas que fallaron por ausencia de implementación: `PENDIENTE`.
-- Resultado reproducible o enlace a evidencia: `PENDIENTE`.
+- Fecha/hora: `2026-08-28T13:48:12-05:00`.
+- Commit o árbol de trabajo probado: árbol de trabajo sin commit, basado en `cf8f55e`, con la infraestructura y las pruebas TDD nuevas.
+- Comando ejecutado: `.\mvnw.cmd test`.
+- Pruebas que fallaron por ausencia de implementación: 21 ejecutadas, 21 fallos, 0 errores y 0 omitidas. Entre los fallos representativos están la ausencia de la calculadora de métricas, las rutas de órdenes, stock, riesgo y resumen todavía no implementadas, el uso actual de `Inventario` para validar movimientos y la falta de restricción de `AGENTE` sobre movimientos manuales.
+- Resultado reproducible o enlace a evidencia: `BUILD FAILURE` de Surefire por fallos de aserción; el código de producción y las 11 fuentes de prueba compilaron, el perfil `test` inició correctamente con H2 en memoria y no hubo fallos de contexto ni de base de datos. Informes locales en `target/surefire-reports/`.
 
 No se registrará como evidencia roja una falla de compilación accidental o de infraestructura; debe demostrar una regla aún no implementada.
 

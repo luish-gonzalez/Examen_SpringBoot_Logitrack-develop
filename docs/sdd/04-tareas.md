@@ -15,35 +15,35 @@ Las tareas son consecutivas, pequeñas y verificables. Una casilla solo se marca
 
 ## Fase 2. Preparación TDD
 
-- [ ] T009 Inspeccionar dependencias y configuración de pruebas existentes en `pom.xml` y `src/test`.
-- [ ] T010 Diseñar el perfil aislado de pruebas en `src/test/resources` sin base externa.
-- [ ] T011 Incorporar únicamente dependencias de prueba imprescindibles en `pom.xml`.
+- [x] T009 Inspeccionar dependencias y configuración de pruebas existentes en `pom.xml` y `src/test`.
+- [x] T010 Diseñar el perfil aislado de pruebas en `src/test/resources` sin base externa.
+- [x] T011 Incorporar únicamente dependencias de prueba imprescindibles en `pom.xml`.
 - [ ] T012 Crear fábricas/fixtures reutilizables para productos, bodegas, movimientos, usuarios y órdenes.
-- [ ] T013 Configurar un `Clock` fijo sustituible en pruebas.
+- [x] T013 Configurar un `Clock` fijo sustituible en pruebas.
 - [ ] T014 Ejecutar las pruebas heredadas y registrar su estado previo.
 
 ## Fase 3. Pruebas en rojo
 
 - [ ] T015 Escribir pruebas unitarias de stock para ENTRADA, SALIDA y TRANSFERENCIA en `src/test/.../services`.
-- [ ] T016 Probar que todos los `DetalleMovimiento` participan y que el total suma todas las bodegas.
-- [ ] T017 Probar rechazo de SALIDA y TRANSFERENCIA que producirían stock negativo.
+- [x] T016 Probar que todos los `DetalleMovimiento` participan y que el total suma todas las bodegas.
+- [x] T017 Probar rechazo de SALIDA y TRANSFERENCIA que producirían stock negativo.
 - [ ] T018 Probar ventana de 30 días, inclusión de hoy y exclusión de movimientos no `SALIDA`.
-- [ ] T019 Probar consumo cero: cobertura `null` y `SIN_CONSUMO`.
+- [x] T019 Probar consumo cero: cobertura `null` y `SIN_CONSUMO`.
 - [ ] T020 Probar consumo positivo: `CON_CONSUMO`, punto de reorden y cobertura.
 - [ ] T021 Probar que la comparación de riesgo ocurre antes del redondeo y que igualdad no implica riesgo.
-- [ ] T022 Probar exclusión de producto sin proveedor principal y sugerencia de bodega con desempate por id.
+- [x] T022 Probar exclusión de producto sin proveedor principal y sugerencia de bodega con desempate por id.
 - [ ] T023 Probar ocupación, límite crítico de 90 %, quiebre y saldos cero.
 - [ ] T024 Probar órdenes `BORRADOR`: conteo, suma monetaria, cantidad inválida y total calculado.
 - [ ] T025 Probar movimientos de ayer por tipo y límites de `America/Bogota`.
 - [ ] T026 Probar todas las transiciones válidas e inválidas, incluida cancelada → aprobada.
-- [ ] T027 Probar que `APROBADA → RECIBIDA` crea una ENTRADA con el detalle correcto.
+- [x] T027 Probar que `APROBADA → RECIBIDA` crea una ENTRADA con el detalle correcto.
 - [ ] T028 Probar rollback conjunto si falla la recepción transaccional.
-- [ ] T029 Probar generación/reemplazo del PDF, marca `BORRADOR` e invalidación tras transición.
+- [x] T029 Probar generación/reemplazo del PDF, marca `BORRADOR` e invalidación tras transición.
 - [ ] T030 Probar contrato exacto del resumen, enumeraciones, longitudes, IDs y ausencia de campos extra.
 - [ ] T031 Probar que un resumen inválido conserva el último válido y que publicar hoy actualiza una fila.
 - [ ] T032 Escribir pruebas de seguridad: no autenticado 401, `AGENTE` al aprobar 403 y matriz de permisos.
-- [ ] T033 Escribir pruebas MockMvc de los endpoints y códigos 400/404 principales.
-- [ ] T034 Escribir al menos una integración Spring Boot/MockMvc para PATCH de estado o POST de resumen.
+- [x] T033 Escribir pruebas MockMvc de los endpoints y códigos 400/404 principales.
+- [x] T034 Escribir al menos una integración Spring Boot/MockMvc para PATCH de estado o POST de resumen.
 - [ ] T035 Ejecutar la suite nueva, conservar evidencia roja y autorizar el commit `test: define reorder and order-state rules`.
 
 ## Fase 4. Modelo y persistencia

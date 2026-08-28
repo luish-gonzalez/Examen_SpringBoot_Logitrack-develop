@@ -1,0 +1,25 @@
+LogiTrack IQ - Evidencia TDD roja
+
+Fecha y hora: 2026-08-28T13:58:02-05:00
+Comando ejecutado: .\mvnw.cmd test
+
+Resultado Maven/Surefire:
+Tests run: 21, Failures: 21, Errors: 0, Skipped: 0
+BUILD FAILURE
+
+Fallos representativos extraidos de la ejecucion:
+- CalculadoraMetricasInventarioTest.consumoCeroProduceCoberturaNulaYEstadoSinConsumo: ClassNotFoundException: com.logitrack.services.CalculadoraMetricasInventario.
+- MovimientoStockValidationIntegrationTest.salidaAceptaSaldoDerivadoAunqueInventarioAlmacenadoIndiqueCero: status esperado 201, obtenido 400.
+- MovimientoStockValidationIntegrationTest.salidaRechazaSaldoDerivadoInsuficienteAunqueInventarioIndiqueCien: status esperado 400, obtenido 201.
+- OrdenCompraIntegrationTest.cantidadNoPositivaRespondeBadRequest: status esperado 400, obtenido 500.
+- OrdenCompraSecurityIntegrationTest.agenteNoPuedeRegistrarMovimientoManual: status esperado 403, obtenido 201.
+- ProductoStockIntegrationTest.calculaStockDesdeTodosLosDetallesYTiposSinUsarInventario: status esperado 200, obtenido 500.
+- ResumenPanelIntegrationTest.severidadInvalidaRespondeBadRequestYConservaResumenAnterior: status esperado 200 al preparar el resumen previo, obtenido 500.
+
+Validacion de infraestructura:
+- Las fuentes de produccion y de prueba estaban compiladas correctamente.
+- Spring Boot inicio con el perfil test y H2 en memoria.
+- No hubo errores de ApplicationContext, conexion externa, base de datos ni infraestructura.
+- Errors = 0.
+
+Maven finalizo por fallos de asercion que representan reglas o superficies IQ ausentes o incorrectas.
