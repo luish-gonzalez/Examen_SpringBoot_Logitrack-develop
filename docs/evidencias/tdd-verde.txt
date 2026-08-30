@@ -1,0 +1,49 @@
+# Evidencia TDD verde — LogiTrack IQ
+
+## Ejecución de pruebas
+
+Fecha/hora de ejecución: 2026-08-30T10:20:05-05:00
+
+Comando ejecutado:
+
+```powershell
+.\mvnw.cmd test
+```
+
+Resultado real:
+
+```text
+Tests run: 34
+Failures: 0
+Errors: 0
+Skipped: 0
+BUILD SUCCESS
+```
+
+## Empaquetado
+
+Fecha/hora de ejecución: 2026-08-30T10:20:14-05:00
+
+Comando ejecutado:
+
+```powershell
+.\mvnw.cmd -DskipTests package
+```
+
+Resultado real:
+
+```text
+BUILD SUCCESS
+```
+
+## Comparación TDD
+
+- ROJO inicial: 21 tests / 21 failures / 0 errors.
+- ROJO fase 2: 33 tests / 8 failures / 0 errors.
+- VERDE final: 34 tests / 0 failures / 0 errors / 0 skipped.
+
+## Smoke test MySQL
+
+MySQL smoke test: no ejecutado.
+
+Razón: Docker no está instalado o disponible en este entorno, por lo que no fue posible levantar un contenedor temporal de MySQL 8.
