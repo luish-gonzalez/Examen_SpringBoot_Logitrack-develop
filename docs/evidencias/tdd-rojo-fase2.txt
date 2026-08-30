@@ -1,0 +1,41 @@
+Evidencia TDD — fase 2 (rojo controlado)
+
+Fecha y hora de ejecución: 2026-08-30T01:19:50-05:00 (America/Bogota)
+Comando ejecutado: .\mvnw.cmd test
+
+Resumen real de Surefire:
+Tests run: 33
+Failures: 8
+Errors: 0
+Skipped: 0
+BUILD FAILURE
+
+Fallos funcionales representativos:
+- ProductoRiesgoVentanaPrecisionIntegrationTest.salidaUnitariaCalculaUnTreintavoSinErrorNiRedondeoIntermedio
+  esperaba HTTP 200; recibió 500. Expone que 1 / 30 no se puede dividir sin precisión/escala.
+- KpisIntegrationTest.devuelveEstructuraYMetricasCalculadasDesdeMovimientos
+  esperaba HTTP 200; recibió 500. GET /kpis aún no está implementado.
+- BodegaCriticaIntegrationTest.soloIncluyeOcupacionIgualOMayorAlNoventaPorCiento
+  esperaba HTTP 200; recibió 500. GET /bodegas/criticas aún no está implementado.
+- ConsultaIqSecurityIntegrationTest (stock, riesgo y proveedores)
+  EMPLEADO esperaba 403; recibió 200. Las consultas dependen de authenticated() y no de la matriz IQ.
+- ConsultaIqSecurityIntegrationTest (kpis y bodegas críticas)
+  ADMIN/AGENTE esperaban 200 y EMPLEADO 403; la ruta ausente devolvió 500. Este resultado se separa de la regla de autorización pendiente.
+
+Tests nuevos verdes:
+- ProductoRiesgoVentanaPrecisionIntegrationTest.ventanaIncluyeHoyYHaceVeintinueveDiasPeroExcluyeHaceTreintaDias
+- ResumenPanelReemplazoAuditoriaIntegrationTest.segundoResumenValidoReemplazaLaUnicaFilaYDejaAuditoria
+- OrdenCompraRecepcionAtomicidadAuditoriaIntegrationTest.falloDuranteEntradaAutomaticaRevierteEstadoYNoDejaPersistenciaParcial
+- OrdenCompraRecepcionAtomicidadAuditoriaIntegrationTest.recepcionExitosaCreaEntradaYCreaAuditoriaDeMovimientoYOrden
+
+Tests nuevos rojos:
+- ProductoRiesgoVentanaPrecisionIntegrationTest.salidaUnitariaCalculaUnTreintavoSinErrorNiRedondeoIntermedio
+- KpisIntegrationTest.devuelveEstructuraYMetricasCalculadasDesdeMovimientos
+- BodegaCriticaIntegrationTest.soloIncluyeOcupacionIgualOMayorAlNoventaPorCiento
+- ConsultaIqSecurityIntegrationTest.stockRespetaMatrizDeConsultaIq
+- ConsultaIqSecurityIntegrationTest.riesgoRespetaMatrizDeConsultaIq
+- ConsultaIqSecurityIntegrationTest.proveedoresRespetaMatrizDeConsultaIq
+- ConsultaIqSecurityIntegrationTest.kpisExigeRutaFuncionalAntesDePoderValidarSuMatriz
+- ConsultaIqSecurityIntegrationTest.bodegasCriticasExigeRutaFuncionalAntesDePoderValidarSuMatriz
+
+No hubo errores de compilación, carga de contexto ni infraestructura: Errors = 0.
