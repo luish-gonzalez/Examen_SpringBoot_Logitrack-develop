@@ -18,11 +18,11 @@ public class OpenApiConfig {
     public OpenAPI logitrackOpenApi() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("LogiTrack API")
+                        .title("LogiTrack IQ API")
                         .description(
                                 "API REST para la gestión de bodegas, "
                                         + "productos, movimientos de inventario, "
-                                        + "auditorías y reportes de LogiTrack."
+                                        + "auditorías, reportes e indicadores IQ de LogiTrack."
                         )
                         .version("1.0.0")
                 )

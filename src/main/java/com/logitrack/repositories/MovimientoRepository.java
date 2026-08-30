@@ -20,6 +20,11 @@ public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
 
     List<Movimiento> findByFechaBetween(LocalDateTime fechaInicio, LocalDateTime fechaFin);
 
+    List<Movimiento> findByFechaGreaterThanEqualAndFechaLessThan(
+            LocalDateTime fechaInicio,
+            LocalDateTime fechaFin
+    );
+
     List<Movimiento> findByTipoAndFechaBetween(
             TipoMovimiento tipo,
             LocalDateTime fechaInicio,

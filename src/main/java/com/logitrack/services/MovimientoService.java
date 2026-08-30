@@ -23,8 +23,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.Clock;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.Authentication;
@@ -40,6 +43,8 @@ public class MovimientoService {
         private final BodegaRepository bodegaRepository;
         private final UsuarioRepository usuarioRepository;
         private final AuditoriaService auditoriaService;
+        private final StockDerivadoService stockDerivadoService;
+        private final Clock clock;
 
         public MovimientoService(
                         MovimientoRepository movimientoRepository,
@@ -48,7 +53,9 @@ public class MovimientoService {
                         ProductoRepository productoRepository,
                         BodegaRepository bodegaRepository,
                         UsuarioRepository usuarioRepository,
-                        AuditoriaService auditoriaService) {
+                        AuditoriaService auditoriaService,
+                        StockDerivadoService stockDerivadoService,
+                        Clock clock) {
 
                 this.movimientoRepository = movimientoRepository;
                 this.detalleMovimientoRepository = detalleMovimientoRepository;
@@ -57,6 +64,8 @@ public class MovimientoService {
                 this.bodegaRepository = bodegaRepository;
                 this.usuarioRepository = usuarioRepository;
                 this.auditoriaService = auditoriaService;
+                this.stockDerivadoService = stockDerivadoService;
+                this.clock = clock;
         }
 
         public List<MovimientoResponse> listarTodos() {
@@ -149,7 +158,7 @@ public class MovimientoService {
                                 .orElseThrow(() -> new ResourceNotFoundException("Usuario autenticado no encontrado."));
 
                 Movimiento movimiento = new Movimiento();
-                movimiento.setFecha(LocalDateTime.now());
+                movimiento.setFecha(LocalDateTime.now(clock));
                 movimiento.setTipo(request.getTipo());
                 movimiento.setUsuarioResponsable(usuario);
 
@@ -219,8 +228,6 @@ public class MovimientoService {
                                 break;
                 }
 
-                movimiento = movimientoRepository.save(movimiento);
-
                 List<DetalleMovimiento> detalles = new ArrayList<>();
 
                 for (DetalleMovimientoRequest detalleRequest : request.getDetalles()) {
@@ -236,107 +243,149 @@ public class MovimientoService {
                                                         "Producto no encontrado."));
 
                         DetalleMovimiento detalle = new DetalleMovimiento();
-                        detalle.setMovimiento(movimiento);
                         detalle.setProducto(producto);
                         detalle.setCantidad(detalleRequest.getCantidad());
 
-                        actualizarInventario(
-                                        request.getTipo(),
-                                        producto,
-                                        bodegaOrigen,
-                                        bodegaDestino,
-                                        detalleRequest.getCantidad());
-
                         detalles.add(detalle);
                 }
-                detalleMovimientoRepository.saveAll(detalles);
+
+                validarStockDisponible(
+                                request.getTipo(),
+                                bodegaOrigen,
+                                detalles);
+
+                movimiento = persistirMovimiento(
+                                movimiento,
+                                bodegaOrigen,
+                                bodegaDestino,
+                                detalles,
+                                usuario);
+
+                return convertirAResponse(movimiento);
+        }
+
+        @Transactional
+        public Movimiento registrarEntradaAutomatica(
+                        Producto producto,
+                        Integer cantidad,
+                        Bodega bodegaDestino,
+                        Usuario usuarioResponsable) {
+                Movimiento movimiento = new Movimiento();
+                movimiento.setFecha(LocalDateTime.now(clock));
+                movimiento.setTipo(TipoMovimiento.ENTRADA);
+                movimiento.setUsuarioResponsable(usuarioResponsable);
+                movimiento.setBodegaDestino(bodegaDestino);
+
+                DetalleMovimiento detalle = new DetalleMovimiento();
+                detalle.setProducto(producto);
+                detalle.setCantidad(cantidad);
+
+                return persistirMovimiento(
+                                movimiento,
+                                null,
+                                bodegaDestino,
+                                List.of(detalle),
+                                usuarioResponsable);
+        }
+
+        private Movimiento persistirMovimiento(
+                        Movimiento movimiento,
+                        Bodega bodegaOrigen,
+                        Bodega bodegaDestino,
+                        List<DetalleMovimiento> detalles,
+                        Usuario usuario) {
+                Movimiento movimientoGuardado = movimientoRepository.save(movimiento);
+                detalles.forEach(detalle -> detalle.setMovimiento(movimientoGuardado));
+                movimientoGuardado.setDetalles(detalles);
+                detalleMovimientoRepository.saveAllAndFlush(detalles);
+
+                sincronizarInventarioHeredado(
+                                movimientoGuardado.getTipo(),
+                                bodegaOrigen,
+                                bodegaDestino,
+                                detalles);
 
                 auditoriaService.registrar(
                                 TipoOperacion.INSERT,
                                 usuario.getUsername(),
                                 "Movimiento",
-                                movimiento.getId(),
+                                movimientoGuardado.getId(),
                                 null,
-                                "Movimiento " + movimiento.getTipo() + " registrado");
-
-                return convertirAResponse(movimiento);
+                                "Movimiento " + movimientoGuardado.getTipo() + " registrado");
+                return movimientoGuardado;
         }
 
-        private void actualizarInventario(
+        private void validarStockDisponible(
                         TipoMovimiento tipo,
-                        Producto producto,
+                        Bodega bodegaOrigen,
+                        List<DetalleMovimiento> detalles) {
+                if (tipo == TipoMovimiento.ENTRADA) {
+                        return;
+                }
+
+                Map<Long, Long> cantidadPorProducto = new LinkedHashMap<>();
+                for (DetalleMovimiento detalle : detalles) {
+                        cantidadPorProducto.merge(
+                                        detalle.getProducto().getId(),
+                                        detalle.getCantidad().longValue(),
+                                        Long::sum);
+                }
+
+                for (Map.Entry<Long, Long> solicitud
+                                : cantidadPorProducto.entrySet()) {
+                        long stockDisponible = stockDerivadoService
+                                        .obtenerStockEnBodega(
+                                                        solicitud.getKey(),
+                                                        bodegaOrigen.getId());
+                        if (stockDisponible < solicitud.getValue()) {
+                                throw new BusinessException(
+                                                "Stock insuficiente para realizar el movimiento.");
+                        }
+                }
+        }
+
+        private void sincronizarInventarioHeredado(
+                        TipoMovimiento tipo,
                         Bodega bodegaOrigen,
                         Bodega bodegaDestino,
-                        Integer cantidad) {
+                        List<DetalleMovimiento> detalles) {
+                Map<Long, Producto> productos = new LinkedHashMap<>();
+                detalles.forEach(detalle -> productos.put(
+                                detalle.getProducto().getId(),
+                                detalle.getProducto()));
 
-                switch (tipo) {
-
-                        case ENTRADA:
-                                aumentarStock(producto, bodegaDestino, cantidad);
-                                break;
-
-                        case SALIDA:
-                                disminuirStock(producto, bodegaOrigen, cantidad);
-                                break;
-
-                        case TRANSFERENCIA:
-                                disminuirStock(producto, bodegaOrigen, cantidad);
-                                aumentarStock(producto, bodegaDestino, cantidad);
-                                break;
-
-                        default:
-                                throw new BusinessException("Tipo de movimiento no válido.");
+                for (Producto producto : productos.values()) {
+                        if (tipo != TipoMovimiento.ENTRADA) {
+                                sincronizarInventario(producto, bodegaOrigen);
+                        }
+                        if (tipo != TipoMovimiento.SALIDA) {
+                                sincronizarInventario(producto, bodegaDestino);
+                        }
                 }
         }
 
-        private void aumentarStock(
+        private void sincronizarInventario(
                         Producto producto,
-                        Bodega bodega,
-                        Integer cantidad) {
-
-                Inventario inventario = inventarioRepository
-                                .findByBodegaIdAndProductoId(
-                                                bodega.getId(),
-                                                producto.getId())
-                                .orElse(null);
-
-                if (inventario == null) {
-
-                        inventario = new Inventario();
-                        inventario.setBodega(bodega);
-                        inventario.setProducto(producto);
-                        inventario.setStock(cantidad);
-
-                } else {
-
-                        inventario.setStock(
-                                        inventario.getStock() + cantidad);
-                }
-
-                inventarioRepository.save(inventario);
-        }
-
-        private void disminuirStock(
-                        Producto producto,
-                        Bodega bodega,
-                        Integer cantidad) {
-
-                Inventario inventario = inventarioRepository
-                                .findByBodegaIdAndProductoId(
-                                                bodega.getId(),
-                                                producto.getId())
-                                .orElseThrow(() -> new BusinessException(
-                                                "No existe inventario para el producto en la bodega."));
-
-                if (inventario.getStock() < cantidad) {
-
+                        Bodega bodega) {
+                long stockDerivado = stockDerivadoService.obtenerStockEnBodega(
+                                producto.getId(),
+                                bodega.getId());
+                if (stockDerivado > Integer.MAX_VALUE) {
                         throw new BusinessException(
-                                        "Stock insuficiente para realizar el movimiento.");
+                                        "El stock excede la capacidad numérica permitida.");
                 }
 
-                inventario.setStock(
-                                inventario.getStock() - cantidad);
-
+                Inventario inventario = inventarioRepository
+                                .findByBodegaIdAndProductoId(
+                                                bodega.getId(),
+                                                producto.getId())
+                                .orElseGet(() -> {
+                                        Inventario nuevo = new Inventario();
+                                        nuevo.setBodega(bodega);
+                                        nuevo.setProducto(producto);
+                                        return nuevo;
+                                });
+                inventario.setStock(Math.toIntExact(stockDerivado));
                 inventarioRepository.save(inventario);
         }
 

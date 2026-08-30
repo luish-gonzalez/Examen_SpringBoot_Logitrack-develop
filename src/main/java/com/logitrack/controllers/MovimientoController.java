@@ -7,6 +7,7 @@ import com.logitrack.services.MovimientoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -66,6 +67,7 @@ public class MovimientoController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MovimientoResponse> registrarMovimiento(
             @Valid @RequestBody MovimientoRequest request) {
 

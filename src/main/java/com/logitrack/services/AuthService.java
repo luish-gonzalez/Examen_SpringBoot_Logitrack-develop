@@ -10,6 +10,7 @@ import com.logitrack.dto.AuthResponse;
 import com.logitrack.dto.LoginRequest;
 import com.logitrack.dto.RegisterRequest;
 import com.logitrack.entities.Usuario;
+import com.logitrack.enums.Rol;
 import com.logitrack.exceptions.BusinessException;
 import com.logitrack.repositories.UsuarioRepository;
 import com.logitrack.security.CustomUserDetailsService;
@@ -40,6 +41,12 @@ public class AuthService {
 
     public AuthResponse registrar(RegisterRequest request) {
         String username = request.getUsername().trim();
+
+        if (request.getRol() != Rol.EMPLEADO) {
+            throw new BusinessException(
+                    "El registro público solo permite el rol EMPLEADO."
+            );
+        }
 
         if (usuarioRepository.existsByUsername(username)) {
             throw new BusinessException(

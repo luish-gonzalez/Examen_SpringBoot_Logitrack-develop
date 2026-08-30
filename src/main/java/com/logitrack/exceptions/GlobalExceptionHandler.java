@@ -9,6 +9,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -81,6 +82,20 @@ public class GlobalExceptionHandler {
         ErrorResponse respuesta = construirRespuesta(
                 HttpStatus.BAD_REQUEST,
                 mensaje,
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> manejarCuerpoNoLegible(
+            HttpMessageNotReadableException exception,
+            HttpServletRequest request) {
+
+        ErrorResponse respuesta = construirRespuesta(
+                HttpStatus.BAD_REQUEST,
+                "El cuerpo de la solicitud contiene datos inválidos.",
                 request.getRequestURI()
         );
 
