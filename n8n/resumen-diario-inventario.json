@@ -1,0 +1,204 @@
+{
+  "name": "Resumen diario de inventario",
+  "id": "logitrack-resumen-diario-inventario",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 6,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "01b2188e-889a-4f60-9449-1ab5f8786401",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -480,
+        80
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "720eef91-8eef-42a2-856e-a81fd0e7c24d",
+      "name": "Ejecutar manualmente",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Ejecuta ahora la operación diaria automática de LogiTrack IQ.",
+        "options": {
+          "systemMessage": "Eres el operador automático de LogiTrack IQ. Usa exclusivamente las herramientas MCP disponibles: consultar_stock_producto, consultar_bodegas_criticas, consultar_productos_en_riesgo, consultar_kpis, crear_orden_borrador y publicar_resumen.\n\nSECUENCIA OBLIGATORIA\n1. Cada ejecución empieza llamando primero a consultar_kpis y consultar_productos_en_riesgo. No decidas crear una orden antes de que ambas respondan correctamente.\n2. Si cualquiera falla, detente. No crees una orden ni inventes datos o un resumen. Devuelve solo un JSON final con estado ERROR, mensaje claro, ordenCreada false y resumenPublicado false.\n3. Si riesgos es [], no llames crear_orden_borrador. Publica un resumen coherente que indique que no fue necesario crear una orden.\n4. Si hay riesgos, usa exclusivamente el PRIMER producto listado, sin reordenar, recorrer ni seleccionar otro producto. Solo crea una orden si aporta productoId, proveedorId, bodegaDestinoId, precioUnitarioSugerido, puntoReorden y stockTotal reales.\n5. Calcula solo cantidad = ceil(max(1, puntoReorden * 2 - stockTotal)). No recalcules stock, consumo diario, punto de reorden, cobertura u ocupación. Envía la cantidad calculada y el precioUnitarioSugerido real a crear_orden_borrador.\n6. MÁXIMO UNA orden BORRADOR por ejecución. Después de intentar crear_orden_borrador, no vuelvas a llamarla, aunque falle. Si faltan datos o falla, informa el problema y no intentes otro producto.\n7. Después del análisis y de la posible única orden, llama publicar_resumen con un objeto resumen que tenga solamente fecha, narrativa, alertas y accionesSugeridas. Fecha usa YYYY-MM-DD; narrativa tiene 20 a 500 caracteres; severidad solo BAJA, MEDIA o ALTA; tipo solo REVISAR_ORDEN, REVISAR_PRODUCTO o REVISAR_BODEGA. Cada alerta y acción usa IDs reales obtenidos durante esta ejecución; no inventes IDs.\n8. consultar_stock_producto y consultar_bodegas_criticas son opcionales y solo complementan el resumen; no habilitan otra orden.\n\nPROHIBIDO\nNunca apruebes, recibas, canceles ni cambies el estado de una orden. Nunca registres movimientos manuales, uses MySQL, consultes tablas, llames endpoints alternativos ni uses herramientas no listadas.\n\nRESPUESTA FINAL\nDevuelve exclusivamente JSON sin Markdown: {\"estado\":\"EXITO o ERROR\",\"mensaje\":\"resultado verificable\",\"ordenCreada\":true o false,\"resumenPublicado\":true o false}."
+        }
+      },
+      "id": "d3d6d1ef-a23d-4a9a-9c3a-81f0e531f637",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -120,
+        80
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "4f86284d-42ee-4e2e-8c9a-7b0ddcd63cb2",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "endpointUrl": "={{ $env.LOGITRACK_MCP_URL }}",
+        "serverTransport": "httpStreamable",
+        "authentication": "bearerAuth",
+        "include": "selected",
+        "includeTools": [
+          "consultar_stock_producto",
+          "consultar_bodegas_criticas",
+          "consultar_productos_en_riesgo",
+          "consultar_kpis",
+          "crear_orden_borrador",
+          "publicar_resumen"
+        ],
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "f9cf8e4b-6ca8-476c-903d-0a64b5ba1e79",
+      "name": "MCP Client Tool",
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.4,
+      "position": [
+        100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $json.output;\nlet result;\n\ntry {\n  result = typeof raw === 'string' ? JSON.parse(raw) : raw;\n} catch {\n  result = {\n    estado: 'ERROR',\n    mensaje: 'La salida del AI Agent no fue JSON válido.',\n    ordenCreada: false,\n    resumenPublicado: false\n  };\n}\n\nreturn [{\n  json: {\n    estado: result?.estado === 'ERROR' ? 'ERROR' : 'EXITO',\n    mensaje: String(result?.mensaje ?? 'Operación finalizada.'),\n    ordenCreada: result?.ordenCreada === true,\n    resumenPublicado: result?.resumenPublicado === true\n  }\n}];"
+      },
+      "id": "891c98c1-6fdd-4e46-a87e-60a5284aab77",
+      "name": "Normalizar resultado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        180,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const detail = $json.error?.message ?? $json.message ?? 'Falló la conexión, autenticación o una herramienta MCP.';\n\nreturn [{\n  json: {\n    estado: 'ERROR',\n    mensaje: String(detail),\n    ordenCreada: false,\n    resumenPublicado: false\n  }\n}];"
+      },
+      "id": "fa3a0e1d-42ce-4f59-9c1f-d2e3343141a6",
+      "name": "Registrar error controlado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        180,
+        160
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ejecutar manualmente": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Normalizar resultado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registrar error controlado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "America/Bogota",
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true
+  },
+  "versionId": "a5b6e0a0-7f04-4e70-8f3c-b980305907e0",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}
