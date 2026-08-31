@@ -31,3 +31,12 @@ crear ordenes ni publicar resumenes adicionales.
 
 La captura real principal es `ejecucion-error-controlado.png`. No se
 inventan detalles visuales adicionales.
+
+### Capturas auxiliares del flujo de error
+
+Las siguientes capturas reales complementan la evidencia principal y documentan
+los nodos visibles durante el fallo controlado:
+
+- `ejecucion-error-controlado-nodoAiAgent.png` ? AI Agent.
+- `ejecucion-error-controlado-nodoMcpClientTool.png` ? MCP Client Tool.
+- `ejecucion-error-controlado-nodoCodeRegistrarErrorControlado.png` ? Registrar error controlado.
