@@ -18,4 +18,4 @@
 | Arquitectura | ✅ COMPLETO | `docs/arquitectura-logitrack-iq.md` |
 | Video de 4–6 min | ⚠️ PENDIENTE | Grabar y adjuntar/enlazar fuera del repositorio si la entrega lo requiere |
 | GitHub / push | ⚠️ PENDIENTE | Configurar remoto y publicar solo con autorización explícita |
-| Capturas frontend | ⚠️ PENDIENTE | No hay capturas de dashboard/PDF/aprobación dentro del repositorio |
+| Capturas frontend | ✅ COMPLETO | `docs/evidencias/frontend-admin-aprobacion.png`, `frontend-admin-dashboard.png`, `frontend-agente-dashboard.png` y `frontend-pdf-borrador.png` |

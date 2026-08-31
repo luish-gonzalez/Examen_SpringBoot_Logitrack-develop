@@ -41,3 +41,5 @@ src/main/resources/application-local.properties
 
 ### Legacy exam evidence ###
 evidenciasExamen/
+ca.pem
+n8n/database.sqlite
