@@ -29,6 +29,8 @@ exclusivamente: `consultar_stock_producto`, `consultar_bodegas_criticas`,
 `consultar_productos_en_riesgo`, `consultar_kpis`,
 `crear_orden_borrador` y `publicar_resumen`.
 
+> El streaming del **AI Agent** está desactivado para estabilidad con la configuración probada de Gemini.
+
 ## Reglas del Agent
 
 El Agent consulta primero KPIs y riesgos; si hay riesgos usa exclusivamente el
