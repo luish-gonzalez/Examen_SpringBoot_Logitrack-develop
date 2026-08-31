@@ -16,6 +16,6 @@
 | Frontend torre de control | ✅ COMPLETO | `src/main/resources/static/`, validación manual registrada |
 | PDF de orden | ✅ COMPLETO | `PdfOrdenService`, `OrdenCompraPdfIntegrationTest` |
 | Arquitectura | ✅ COMPLETO | `docs/arquitectura-logitrack-iq.md` |
-| Video de 4–6 min | ⚠️ PENDIENTE | Grabar y adjuntar/enlazar fuera del repositorio si la entrega lo requiere |
+| Video de 4–6 min | ✅ COMPLETO | Video demostrativo final grabado. |
 | GitHub / push | ⚠️ PENDIENTE | Configurar remoto y publicar solo con autorización explícita |
 | Capturas frontend | ✅ COMPLETO | `docs/evidencias/frontend-admin-aprobacion.png`, `frontend-admin-dashboard.png`, `frontend-agente-dashboard.png` y `frontend-pdf-borrador.png` |
