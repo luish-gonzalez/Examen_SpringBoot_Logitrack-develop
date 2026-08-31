@@ -73,9 +73,9 @@ CREATE TABLE IF NOT EXISTS movimientos (
     CONSTRAINT fk_movimientos_usuario FOREIGN KEY (usuario_responsable_id)
         REFERENCES usuarios(id) ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT fk_movimientos_origen FOREIGN KEY (bodega_origen_id)
-        REFERENCES bodegas(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+        REFERENCES bodegas(id),
     CONSTRAINT fk_movimientos_destino FOREIGN KEY (bodega_destino_id)
-        REFERENCES bodegas(id) ON UPDATE CASCADE ON DELETE RESTRICT
+        REFERENCES bodegas(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS detalle_movimientos (

@@ -30,6 +30,8 @@ En una base MySQL vacía, cargue los scripts manualmente y en este orden:
 
 Las semillas usan fechas relativas e incluyen usuarios académicos de prueba `admin` (ADMIN), `agente` (AGENTE) y `empleado` (EMPLEADO), además de proveedores, bodegas, productos y movimientos. No contienen credenciales de infraestructura.
 
+Las tres cuentas demo usan la contraseña académica `LogiTrackIQ2026!`.
+
 ## Ejecución
 
 Desde la raíz del proyecto:

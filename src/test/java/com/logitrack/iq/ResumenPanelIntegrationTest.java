@@ -69,6 +69,23 @@ class ResumenPanelIntegrationTest {
         publicarInvalidoYComprobarAnterior(alerta);
     }
 
+    @Test
+    void resumenConContenidoSerializadoMayorA255CaracteresSePersisteIntegro() throws Exception {
+        String narrativaLarga = "N".repeat(420);
+        Map<String, Object> cuerpo = resumen(List.of());
+        cuerpo.put("narrativa", narrativaLarga);
+
+        mockMvc.perform(post("/panel/resumen")
+                        .with(user(admin.getUsername()).roles("ADMIN"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(cuerpo)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/panel/resumen")
+                        .with(user(admin.getUsername()).roles("ADMIN")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.narrativa").value(narrativaLarga));
+    }
     private void publicarResumenValido() throws Exception {
         mockMvc.perform(post("/panel/resumen")
                         .with(user(admin.getUsername()).roles("ADMIN"))

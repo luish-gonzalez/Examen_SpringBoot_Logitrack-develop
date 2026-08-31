@@ -37,7 +37,7 @@ public class ResumenPanel {
 
     @NotNull(message = "El contenido del resumen es obligatorio.")
     @Lob
-    @Column(nullable = false)
+    @Column(name = "contenido_json", nullable = false, columnDefinition = "LONGTEXT")
     private String contenidoJson;
 
     @NotNull(message = "El autor es obligatorio.")

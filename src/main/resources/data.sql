@@ -2,9 +2,9 @@
 -- Ejecutar manualmente tras schema.sql. INSERT IGNORE evita duplicados.
 
 INSERT IGNORE INTO usuarios (id, nombre, username, password, rol, activo) VALUES
- (1, 'Administrador Demo', 'admin', '$2y$10$pn9s0Dxp6M49WYYUOzuW1evoCblZA8EWlIZlz6lYF3UNKN7T7DH62', 'ADMIN', TRUE),
- (2, 'Agente Demo', 'agente', '$2y$10$BH0AqEFTfN9CPA9PZ6364ebyk2bjCA3.Zh4RyysnKJSuadXXAehl.', 'AGENTE', TRUE),
- (3, 'Empleado Demo', 'empleado', '$2y$10$BH0AqEFTfN9CPA9PZ6364ebyk2bjCA3.Zh4RyysnKJSuadXXAehl.', 'EMPLEADO', TRUE);
+ (1, 'Administrador Demo', 'admin', '$2a$10$bhObtiToxRbbT/ra2OyZge1/D74NLCNyc/pilVBB04jCqNgnO9lZy', 'ADMIN', TRUE),
+ (2, 'Agente Demo', 'agente', '$2a$10$bhObtiToxRbbT/ra2OyZge1/D74NLCNyc/pilVBB04jCqNgnO9lZy', 'AGENTE', TRUE),
+ (3, 'Empleado Demo', 'empleado', '$2a$10$bhObtiToxRbbT/ra2OyZge1/D74NLCNyc/pilVBB04jCqNgnO9lZy', 'EMPLEADO', TRUE);
 
 INSERT IGNORE INTO proveedores (id, nombre, contacto, dias_entrega) VALUES
  (1, 'Proveedor Industrial Andino', 'ventas@andino.demo', 10),
