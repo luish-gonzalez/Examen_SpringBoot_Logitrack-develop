@@ -1,4 +1,4 @@
-# LogiTrack IQ
+﻿# LogiTrack IQ
 
 Backend académico Spring Boot que extiende LogiTrack con stock derivado desde movimientos, alertas de riesgo, proveedores, órdenes de compra, KPIs, resumen de panel y auditoría.
 
@@ -53,10 +53,6 @@ Para ejecutar la suite aislada, que usa H2 en memoria en modo MySQL y no requier
 .\mvnw.cmd -DskipTests package
 ```
 
-## Alcance posterior
-
-Este repositorio cubre el backend de LogiTrack IQ. Los componentes MCP, skill operativa, flujo n8n y frontend IQ son componentes separados y todavía se desarrollarán posteriormente.
-
 ## Frontend LogiTrack IQ
 
 El frontend est?tico se sirve desde el mismo Spring Boot en `http://localhost:8080/`. No requiere Node, Vite ni un servidor adicional.
@@ -64,3 +60,17 @@ El frontend est?tico se sirve desde el mismo Spring Boot en `http://localhost:80
 El inicio de sesi?n usa `POST /auth/login` y guarda el JWT ?nicamente en `sessionStorage`. Las cuentas acad?micas de demostraci?n son `admin` (ADMIN), `agente` (AGENTE) y `empleado` (EMPLEADO).
 
 El panel IQ consulta KPIs, ocupaci?n, riesgos, ?rdenes BORRADOR y resumen diario. ADMIN puede aprobar una orden BORRADOR; AGENTE puede consultar y crear BORRADOR mediante las rutas permitidas, pero no aprobar. Ocultar una acci?n en la interfaz es solo UX: Spring Security mantiene la autorizaci?n real.
+
+## MCP, Skill y automatización
+
+- El servidor [MCP](mcp-server/README.md) expone seis herramientas sobre Streamable HTTP y opera la API con el rol `AGENTE`; no accede directamente a MySQL ni administra estados de órdenes.
+- El [Skill de operación](skills/operacion-logitrack/SKILL.md) define el flujo seguro: consulta KPIs y riesgos, crea como máximo una orden BORRADOR y publica un resumen válido.
+- El export [n8n](n8n/resumen-diario-inventario.json) contiene el workflow inactivo **Resumen diario de inventario**. Sus instrucciones de importación y configuración segura están en [n8n/README.md](n8n/README.md).
+
+## Arquitectura y evidencias
+
+- Diagrama y responsabilidades: [docs/arquitectura-logitrack-iq.md](docs/arquitectura-logitrack-iq.md).
+- Estado verificable de entrega: [docs/checklist-entrega.md](docs/checklist-entrega.md).
+- Evidencia SDD/TDD: [docs/evidencias](docs/evidencias/) y [docs/sdd](docs/sdd/).
+- Evidencias reales MCP: [mcp-server/evidencias](mcp-server/evidencias/).
+- Evidencias reales n8n: [n8n/evidencias](n8n/evidencias/).
