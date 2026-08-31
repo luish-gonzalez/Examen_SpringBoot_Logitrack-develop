@@ -7,7 +7,6 @@
         "rule": {
           "interval": [
             {
-              "field": "days",
               "triggerAtHour": 6,
               "triggerAtMinute": 0
             }
@@ -20,8 +19,9 @@
       "typeVersion": 1.2,
       "position": [
         -480,
-        80
-      ]
+        16
+      ],
+      "disabled": true
     },
     {
       "parameters": {},
@@ -31,7 +31,7 @@
       "typeVersion": 1,
       "position": [
         -480,
-        220
+        224
       ]
     },
     {
@@ -39,7 +39,7 @@
         "promptType": "define",
         "text": "Ejecuta ahora la operación diaria automática de LogiTrack IQ.",
         "options": {
-          "systemMessage": "Eres el operador automático de LogiTrack IQ. Usa exclusivamente las herramientas MCP disponibles: consultar_stock_producto, consultar_bodegas_criticas, consultar_productos_en_riesgo, consultar_kpis, crear_orden_borrador y publicar_resumen.\n\nSECUENCIA OBLIGATORIA\n1. Cada ejecución empieza llamando primero a consultar_kpis y consultar_productos_en_riesgo. No decidas crear una orden antes de que ambas respondan correctamente.\n2. Si cualquiera falla, detente. No crees una orden ni inventes datos o un resumen. Devuelve solo un JSON final con estado ERROR, mensaje claro, ordenCreada false y resumenPublicado false.\n3. Si riesgos es [], no llames crear_orden_borrador. Publica un resumen coherente que indique que no fue necesario crear una orden.\n4. Si hay riesgos, usa exclusivamente el PRIMER producto listado, sin reordenar, recorrer ni seleccionar otro producto. Solo crea una orden si aporta productoId, proveedorId, bodegaDestinoId, precioUnitarioSugerido, puntoReorden y stockTotal reales.\n5. Calcula solo cantidad = ceil(max(1, puntoReorden * 2 - stockTotal)). No recalcules stock, consumo diario, punto de reorden, cobertura u ocupación. Envía la cantidad calculada y el precioUnitarioSugerido real a crear_orden_borrador.\n6. MÁXIMO UNA orden BORRADOR por ejecución. Después de intentar crear_orden_borrador, no vuelvas a llamarla, aunque falle. Si faltan datos o falla, informa el problema y no intentes otro producto.\n7. Después del análisis y de la posible única orden, llama publicar_resumen con un objeto resumen que tenga solamente fecha, narrativa, alertas y accionesSugeridas. Fecha usa YYYY-MM-DD; narrativa tiene 20 a 500 caracteres; severidad solo BAJA, MEDIA o ALTA; tipo solo REVISAR_ORDEN, REVISAR_PRODUCTO o REVISAR_BODEGA. Cada alerta y acción usa IDs reales obtenidos durante esta ejecución; no inventes IDs.\n8. consultar_stock_producto y consultar_bodegas_criticas son opcionales y solo complementan el resumen; no habilitan otra orden.\n\nPROHIBIDO\nNunca apruebes, recibas, canceles ni cambies el estado de una orden. Nunca registres movimientos manuales, uses MySQL, consultes tablas, llames endpoints alternativos ni uses herramientas no listadas.\n\nRESPUESTA FINAL\nDevuelve exclusivamente JSON sin Markdown: {\"estado\":\"EXITO o ERROR\",\"mensaje\":\"resultado verificable\",\"ordenCreada\":true o false,\"resumenPublicado\":true o false}."
+          "systemMessage": "Eres el operador automático de LogiTrack IQ. Usa exclusivamente las herramientas MCP disponibles: consultar_stock_producto, consultar_bodegas_criticas, consultar_productos_en_riesgo, consultar_kpis, crear_orden_borrador y publicar_resumen.\n\nSECUENCIA OBLIGATORIA\n1. Cada ejecución empieza llamando primero a consultar_kpis y consultar_productos_en_riesgo. No decidas crear una orden antes de que ambas respondan correctamente.\n2. Si cualquiera falla, detente. No crees una orden ni inventes datos o un resumen. Devuelve solo un JSON final con estado ERROR, mensaje claro, ordenCreada false y resumenPublicado false.\n3. Si riesgos es [], no llames crear_orden_borrador. Publica un resumen coherente que indique que no fue necesario crear una orden.\n4. Si hay riesgos, usa exclusivamente el PRIMER producto listado, sin reordenar, recorrer ni seleccionar otro producto. Solo crea una orden si aporta productoId, proveedorId, bodegaDestinoId, precioUnitarioSugerido, puntoReorden y stockTotal reales.\n5. Calcula solo cantidad = ceil(max(1, puntoReorden * 2 - stockTotal)). No recalcules stock, consumo diario, punto de reorden, cobertura u ocupación. Envía la cantidad calculada y el precioUnitarioSugerido real a crear_orden_borrador.\n6. MÁXIMO UNA orden BORRADOR por ejecución. Después de intentar crear_orden_borrador, no vuelvas a llamarla, aunque falle. Si faltan datos o falla, informa el problema y no intentes otro producto.\n7. Después del análisis y de la posible única orden, llama publicar_resumen con un objeto resumen que tenga solamente fecha, narrativa, alertas y accionesSugeridas. Fecha usa YYYY-MM-DD; narrativa tiene 20 a 500 caracteres; severidad solo BAJA, MEDIA o ALTA; tipo solo REVISAR_ORDEN, REVISAR_PRODUCTO o REVISAR_BODEGA. Cada alerta y acción usa IDs reales obtenidos durante esta ejecución; no inventes IDs.\n8. consultar_stock_producto y consultar_bodegas_criticas son opcionales y solo complementan el resumen; no habilitan otra orden.\n\nPROHIBIDO\nNunca apruebes, recibas, canceles ni cambies el estado de una orden. Nunca registres movimientos manuales, uses MySQL, consultes tablas, llames endpoints alternativos ni uses herramientas no listadas.\n\nRESPUESTA FINAL\nDevuelve exclusivamente JSON sin Markdown: {\"estado\":\"EXITO o ERROR\",\"mensaje\":\"resultado verificable\",\"ordenCreada\":true o false,\"resumenPublicado\":true o false}.\n\nVALIDACION OBLIGATORIA DE accionesSugeridas\nPara cada elemento de accionesSugeridas debe existir exactamente UN recurso enlazado.\n\nREVISAR_ORDEN:\n- usar ordenId real;\n- no enlazar simultaneamente productoId ni bodegaId.\n\nREVISAR_PRODUCTO:\n- usar productoId real;\n- no enlazar simultaneamente ordenId ni bodegaId.\n\nREVISAR_BODEGA:\n- usar bodegaId real;\n- no enlazar simultaneamente ordenId ni productoId.\n\nNunca envies dos recursos no nulos en la misma accion. Si el schema acepta campos opcionales omitidos, omite los campos que no correspondan en lugar de inventar IDs."
         }
       },
       "id": "d3d6d1ef-a23d-4a9a-9c3a-81f0e531f637",
@@ -47,34 +47,14 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        -120,
+        -128,
         80
       ],
       "onError": "continueErrorOutput"
     },
     {
       "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "list",
-          "value": "gpt-4o-mini",
-          "cachedResultName": "gpt-4o-mini"
-        },
-        "options": {}
-      },
-      "id": "4f86284d-42ee-4e2e-8c9a-7b0ddcd63cb2",
-      "name": "OpenAI Chat Model",
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.2,
-      "position": [
-        -120,
-        300
-      ]
-    },
-    {
-      "parameters": {
         "endpointUrl": "={{ $env.LOGITRACK_MCP_URL }}",
-        "serverTransport": "httpStreamable",
         "authentication": "bearerAuth",
         "include": "selected",
         "includeTools": [
@@ -87,15 +67,16 @@
         ],
         "options": {
           "timeout": 60000
-        }
+        },
+        "serverTransport": "httpStreamable"
       },
       "id": "f9cf8e4b-6ca8-476c-903d-0a64b5ba1e79",
       "name": "MCP Client Tool",
       "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
       "typeVersion": 1.4,
       "position": [
-        100,
-        300
+        48,
+        320
       ]
     },
     {
@@ -107,8 +88,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        180,
-        40
+        192,
+        -48
       ]
     },
     {
@@ -120,9 +101,23 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        180,
+        192,
         160
       ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -128,
+        304
+      ],
+      "id": "acc16b1a-d38f-4eb9-b93c-eb8da0b3f424",
+      "name": "Google Gemini Chat Model"
     }
   ],
   "pinData": {},
@@ -144,17 +139,6 @@
           {
             "node": "AI Agent",
             "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OpenAI Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -188,6 +172,17 @@
           }
         ]
       ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -197,7 +192,7 @@
     "saveManualExecutions": true,
     "saveExecutionProgress": true
   },
-  "versionId": "a5b6e0a0-7f04-4e70-8f3c-b980305907e0",
+  "versionId": "900469fa-6e99-4a36-9eb7-2e5d718797ed",
   "meta": {
     "templateCredsSetupCompleted": false
   }
