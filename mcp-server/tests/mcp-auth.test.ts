@@ -2,7 +2,7 @@ import { once } from "node:events";
 import type { Server } from "node:http";
 import { afterEach, describe, expect, it } from "vitest";
 import type { McpConfig } from "../src/config.js";
-import { createHttpApp } from "../src/server.js";
+import { createHttpApp, TOOL_NAMES } from "../src/server.js";
 
 const config: McpConfig = {
   LOGITRACK_API_BASE_URL: "http://localhost:8080",
@@ -63,5 +63,43 @@ describe("protección MCP opcional", () => {
     expect(await health.json()).toEqual({ status: "ok" });
     expect(initialized.status).toBe(200);
     expect(initialized.headers.get("mcp-session-id")).toBeTruthy();
+  });
+});
+
+async function listRealToolSchemas() {
+  const baseUrl = await startServer();
+  const initialized = await fetch(`${baseUrl}/mcp`, initializeRequest("mcp-test-token"));
+  const sessionId = initialized.headers.get("mcp-session-id");
+  if (!sessionId) throw new Error("No se obtuvo sesi?n MCP.");
+
+  const response = await fetch(`${baseUrl}/mcp`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json, text/event-stream",
+      "Content-Type": "application/json",
+      Authorization: "Bearer mcp-test-token",
+      "mcp-session-id": sessionId
+    },
+    body: JSON.stringify({ jsonrpc: "2.0", id: 2, method: "tools/list", params: {} })
+  });
+  if (!response.ok) throw new Error("tools/list fall?.");
+  const body = await response.text();
+  const json = body.match(/^data:\s*(.+)$/m)?.[1] ?? body;
+  return (JSON.parse(json) as { result: { tools: Array<{ name: string; inputSchema: unknown }> } }).result.tools;
+}
+
+describe("schemas JSON MCP compatibles con Gemini", () => {
+  it("no expone l?mites exclusivos y conserva minimum 1 donde corresponde", async () => {
+    const tools = await listRealToolSchemas();
+
+    expect(tools.map((tool) => tool.name)).toEqual(TOOL_NAMES);
+    for (const tool of tools) {
+      const serialized = JSON.stringify(tool.inputSchema);
+      expect(serialized).not.toContain("exclusiveMinimum");
+      expect(serialized).not.toContain("exclusiveMaximum");
+    }
+
+    expect(tools.find((tool) => tool.name === "consultar_stock_producto")).toMatchObject({ inputSchema: { properties: { productoId: { minimum: 1 } } } });
+    expect(tools.find((tool) => tool.name === "crear_orden_borrador")).toMatchObject({ inputSchema: { properties: { cantidad: { minimum: 1 } } } });
   });
 });

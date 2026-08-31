@@ -41,7 +41,7 @@ const actionSchema = resourceLinkSchema.extend({
 );
 
 export const toolSchemas = {
-  consultar_stock_producto: z.object({ productoId: z.number().int().positive() }).strict(),
+  consultar_stock_producto: z.object({ productoId: z.number().int().min(1) }).strict(),
   consultar_bodegas_criticas: z.object({}).strict(),
   consultar_productos_en_riesgo: z.object({}).strict(),
   consultar_kpis: z.object({}).strict(),
@@ -49,7 +49,7 @@ export const toolSchemas = {
     productoId: z.number().int(),
     proveedorId: z.number().int(),
     bodegaDestinoId: z.number().int(),
-    cantidad: z.number().int().positive(),
+    cantidad: z.number().int().min(1),
     precioUnitario: precioUnitarioSchema
   }).strict(),
   publicar_resumen: z.object({
