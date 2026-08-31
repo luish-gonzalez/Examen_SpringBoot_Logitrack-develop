@@ -193,13 +193,13 @@ document.addEventListener("DOMContentLoaded", function () {
             responseBody.role ||
             obtenerRolDesdeToken(datosToken);
 
-        localStorage.setItem("token", token);
-        localStorage.setItem("username", username);
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("username", username);
 
         if (rol) {
-            localStorage.setItem("rol", limpiarPrefijoRol(rol));
+            sessionStorage.setItem("rol", limpiarPrefijoRol(rol));
         } else {
-            localStorage.removeItem("rol");
+            sessionStorage.removeItem("rol");
         }
     }
 
@@ -439,7 +439,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function verificarSesionExistente() {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         if (!token) {
             return;
@@ -568,8 +568,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function limpiarSesion() {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
-        localStorage.removeItem("rol");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("username");
+        sessionStorage.removeItem("rol");
     }
 });

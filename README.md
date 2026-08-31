@@ -56,3 +56,11 @@ Para ejecutar la suite aislada, que usa H2 en memoria en modo MySQL y no requier
 ## Alcance posterior
 
 Este repositorio cubre el backend de LogiTrack IQ. Los componentes MCP, skill operativa, flujo n8n y frontend IQ son componentes separados y todavía se desarrollarán posteriormente.
+
+## Frontend LogiTrack IQ
+
+El frontend est?tico se sirve desde el mismo Spring Boot en `http://localhost:8080/`. No requiere Node, Vite ni un servidor adicional.
+
+El inicio de sesi?n usa `POST /auth/login` y guarda el JWT ?nicamente en `sessionStorage`. Las cuentas acad?micas de demostraci?n son `admin` (ADMIN), `agente` (AGENTE) y `empleado` (EMPLEADO).
+
+El panel IQ consulta KPIs, ocupaci?n, riesgos, ?rdenes BORRADOR y resumen diario. ADMIN puede aprobar una orden BORRADOR; AGENTE puede consultar y crear BORRADOR mediante las rutas permitidas, pero no aprobar. Ocultar una acci?n en la interfaz es solo UX: Spring Security mantiene la autorizaci?n real.

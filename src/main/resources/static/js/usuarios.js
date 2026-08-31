@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(USUARIOS_ENDPOINT, {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
                     'Accept': 'application/json'
                 }
             });
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': `Bearer ${sessionStorage.getItem('token')}`
                 },
                 body: JSON.stringify(payload)
             });
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${USUARIOS_ENDPOINT}/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': `Bearer ${sessionStorage.getItem('token')}`
                 }
             });
 
@@ -165,14 +165,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function verificarAutenticacion() {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         if (!token) {
             window.location.href = 'login.html';
         }
     }
 
     function esAdmin() {
-        return (localStorage.getItem('rol') || '').toUpperCase() === 'ADMIN';
+        return (sessionStorage.getItem('rol') || '').toUpperCase() === 'ADMIN';
     }
 
     function esconderAccionesDeAdministracion() {
@@ -181,9 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function cerrarSesion() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        localStorage.removeItem('rol');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('username');
+        sessionStorage.removeItem('rol');
         window.location.href = 'login.html';
     }
 });

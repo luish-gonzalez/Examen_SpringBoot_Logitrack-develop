@@ -38,13 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const [auditResp, prodResp] = await Promise.all([
                 fetch(AUDITORIA_ENDPOINT, {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
                         'Accept': 'application/json'
                     }
                 }),
                 fetch('/api/productos', {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
                         'Accept': 'application/json'
                     }
                 })
@@ -158,16 +158,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function verificarAutenticacion() {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         if (!token) {
             window.location.href = 'login.html';
         }
     }
 
     function cerrarSesion() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        localStorage.removeItem('rol');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('username');
+        sessionStorage.removeItem('rol');
         window.location.href = 'login.html';
     }
 });

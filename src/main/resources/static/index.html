@@ -1,275 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <link rel="icon" type="image/png" href="img/favicon.png">
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <meta
-        name="description"
-        content="Panel principal del sistema de gestión de bodegas LogiTrack"
-    >
-
-    <title>Inicio | LogiTrack</title>
-
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Torre de control de inventario LogiTrack IQ">
+  <title>LogiTrack IQ | Torre de control</title>
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
+<body class="iq-body">
+  <main id="loginView" class="iq-login" aria-labelledby="loginTitle">
+    <section class="iq-login-card">
+      <p class="iq-eyebrow">LogiTrack IQ</p>
+      <h1 id="loginTitle">Torre de control de inventario</h1>
+      <p>Inicie sesi?n para consultar indicadores, riesgos y ?rdenes de compra.</p>
+      <form id="loginForm" novalidate>
+        <label for="username">Usuario</label>
+        <input id="username" name="username" type="text" autocomplete="username" required maxlength="50">
+        <label for="password">Contrase?a</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required minlength="8">
+        <p id="loginMessage" class="iq-message" role="alert" aria-live="assertive" hidden></p>
+        <button id="loginButton" class="iq-button iq-button-primary" type="submit">Iniciar sesi?n</button>
+      </form>
+    </section>
+  </main>
 
-<body>
-
-    <header class="main-header">
-        <div class="header-content">
-
-            <a href="index.html" class="brand">
-                LogiTrack
-            </a>
-
-            <nav class="main-nav" aria-label="Navegación principal">
-                <a href="index.html" class="active">
-                    Inicio
-                </a>
-
-                <a href="bodegas.html">
-                    Bodegas
-                </a>
-
-                <a href="productos.html">
-                    Productos
-                </a>
-
-                <a href="movimientos.html">
-                    Movimientos
-                </a>
-
-                <a href="auditoria.html">
-                    Auditoría
-                </a>
-
-                <a href="usuarios.html" id="navUsuarios" style="display: none;">
-                    Usuarios
-                </a>
-
-                <button
-                    type="button"
-                    id="logoutButton"
-                    class="logout-button"
-                >
-                    Cerrar sesión
-                </button>
-            </nav>
-
-        </div>
+  <div id="dashboardView" hidden>
+    <header class="iq-header">
+      <a class="iq-brand" href="#inicio">LogiTrack <strong>IQ</strong></a>
+      <nav aria-label="Navegaci?n del panel">
+        <a href="#indicadores">Indicadores</a>
+        <a href="#riesgos">Riesgos</a>
+        <a href="#ordenes">?rdenes</a>
+        <a href="#resumen">Resumen</a>
+      </nav>
+      <div class="iq-session"><span id="sessionUser"></span><span id="sessionRole" class="iq-role"></span><button id="logoutButton" class="iq-button iq-button-quiet" type="button">Cerrar sesi?n</button></div>
     </header>
+    <main class="iq-container" id="inicio">
+      <section class="iq-hero">
+        <div><p class="iq-eyebrow">OPERACI?N ? America/Bogota</p><h1>Torre de control de inventario</h1><p id="calculatedAt">Cargando indicadores?</p></div>
+        <button id="refreshButton" class="iq-button iq-button-secondary" type="button">Actualizar panel</button>
+      </section>
+      <p id="appMessage" class="iq-message" role="status" aria-live="polite" hidden></p>
 
-    <main class="container">
+      <section id="indicadores" aria-labelledby="kpiTitle"><div class="iq-section-heading"><h2 id="kpiTitle">Indicadores principales</h2><p>Calculados por LogiTrack IQ; el frontend no recalcula inventario ni fechas.</p></div>
+        <div id="kpiCards" class="iq-kpi-grid" aria-live="polite"></div>
+        <div class="iq-panel"><h3>Movimientos de ayer</h3><div id="movementBreakdown" class="iq-movement-grid"></div></div>
+      </section>
 
-        <section class="page-header">
-            <div>
-                <h1>Panel principal</h1>
+      <section aria-labelledby="occupancyTitle"><div class="iq-section-heading"><h2 id="occupancyTitle">Ocupaci?n por bodega</h2><p>Unidades almacenadas y capacidad reportadas por el backend.</p></div><div id="occupancyList" class="iq-occupancy-list"></div></section>
+      <section aria-labelledby="criticalTitle"><div class="iq-section-heading"><h2 id="criticalTitle">Bodegas cr?ticas</h2><p>Ocupaci?n igual o superior al 90 %.</p></div><div id="criticalWarehouses" class="iq-panel"></div></section>
 
-                <p>
-                    Gestión de bodegas, productos y movimientos de inventario.
-                </p>
-            </div>
+      <section id="riesgos" aria-labelledby="riskTitle"><div class="iq-section-heading"><h2 id="riskTitle">Productos en riesgo</h2><p>Riesgo determinado por LogiTrack IQ desde movimientos registrados.</p></div><div class="iq-table-wrap"><table><thead><tr><th>Producto</th><th>Stock total</th><th>Consumo diario</th><th>Punto de reorden</th><th>D?as de cobertura</th><th>Proveedor</th><th>Bodega destino</th><th>Precio sugerido</th></tr></thead><tbody id="riskRows"></tbody></table></div></section>
 
-            <div>
-                <span class="text-muted">
-                    Usuario:
-                </span>
+      <section id="ordenes" aria-labelledby="orderTitle"><div class="iq-section-heading"><h2 id="orderTitle">?rdenes BORRADOR</h2><p>Las acciones visibles dependen del rol; Spring Security mantiene la autorizaci?n real.</p></div><div class="iq-table-wrap"><table><thead><tr><th>ID</th><th>Producto</th><th>Proveedor</th><th>Bodega destino</th><th>Cantidad</th><th>Precio unitario</th><th>Total</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="orderRows"></tbody></table></div></section>
 
-                <strong id="currentUsername">
-                    Usuario autenticado
-                </strong>
-            </div>
-        </section>
-
-        <div
-            id="pageMessage"
-            class="alert"
-            role="alert"
-            aria-live="polite"
-            hidden
-        ></div>
-
-        <section aria-labelledby="summaryTitle">
-            <div class="card-header">
-                <h2 id="summaryTitle">
-                    Resumen del sistema
-                </h2>
-            </div>
-
-            <div class="grid grid-three-columns">
-
-                <article class="summary-card">
-                    <h3>Bodegas registradas</h3>
-
-                    <p
-                        id="totalBodegas"
-                        class="summary-value"
-                    >
-                        --
-                    </p>
-
-                    <a href="bodegas.html">
-                        Administrar bodegas
-                    </a>
-                </article>
-
-                <article class="summary-card">
-                    <h3>Productos registrados</h3>
-
-                    <p
-                        id="totalProductos"
-                        class="summary-value"
-                    >
-                        --
-                    </p>
-
-                    <a href="productos.html">
-                        Administrar productos
-                    </a>
-                </article>
-
-                <article class="summary-card">
-                    <h3>Movimientos registrados</h3>
-
-                    <p
-                        id="totalMovimientos"
-                        class="summary-value"
-                    >
-                        --
-                    </p>
-
-                    <a href="movimientos.html">
-                        Consultar movimientos
-                    </a>
-                </article>
-
-            </div>
-        </section>
-
-        <section class="card" aria-labelledby="modulesTitle">
-
-            <div class="card-header">
-                <h2 id="modulesTitle">
-                    Módulos principales
-                </h2>
-            </div>
-
-            <div class="grid grid-three-columns">
-
-                <article class="card">
-                    <h2>Gestión de bodegas</h2>
-
-                    <p>
-                        Registra, consulta, actualiza y elimina las bodegas
-                        administradas por LogiTrack.
-                    </p>
-
-                    <p>
-                        Cada bodega puede almacenar su nombre, ubicación,
-                        capacidad y usuario encargado.
-                    </p>
-
-                    <div class="form-actions">
-                        <a
-                            href="bodegas.html"
-                            class="secondary-button"
-                        >
-                            Ir a bodegas
-                        </a>
-                    </div>
-                </article>
-
-                <article class="card">
-                    <h2>Gestión de productos</h2>
-
-                    <p>
-                        Administra los datos generales de los productos
-                        disponibles en el sistema.
-                    </p>
-
-                    <p>
-                        El stock se controla por cada bodega mediante los
-                        registros de inventario.
-                    </p>
-
-                    <div class="form-actions">
-                        <a
-                            href="productos.html"
-                            class="secondary-button"
-                        >
-                            Ir a productos
-                        </a>
-                    </div>
-                </article>
-
-                <article class="card">
-                    <h2>Movimientos de inventario</h2>
-
-                    <p>
-                        Registra entradas, salidas y transferencias de productos
-                        entre las bodegas.
-                    </p>
-
-                    <p>
-                        Cada movimiento conserva la fecha, el usuario
-                        responsable, las bodegas involucradas y las cantidades.
-                    </p>
-
-                    <div class="form-actions">
-                        <a
-                            href="movimientos.html"
-                            class="secondary-button"
-                        >
-                            Ir a movimientos
-                        </a>
-                    </div>
-                </article>
-
-            </div>
-        </section>
-
-        <section class="card" aria-labelledby="securityTitle">
-
-            <div class="card-header">
-                <h2 id="securityTitle">
-                    Seguridad y trazabilidad
-                </h2>
-            </div>
-
-            <p>
-                Las solicitudes protegidas del sistema deben enviar el token
-                JWT obtenido durante el inicio de sesión.
-            </p>
-
-            <p>
-                Las operaciones realizadas por los usuarios pueden registrarse
-                mediante el módulo de auditoría para conservar la trazabilidad
-                de los cambios.
-            </p>
-
-        </section>
-
+      <section id="resumen" aria-labelledby="summaryTitle"><div class="iq-section-heading"><h2 id="summaryTitle">Resumen diario</h2><p>?ltimo resumen v?lido publicado por el panel.</p></div><div id="dailySummary" class="iq-panel" aria-live="polite"></div></section>
     </main>
-
-    <footer class="main-footer">
-        <p>
-            LogiTrack S.A. — Sistema de gestión de bodegas e inventario
-        </p>
-    </footer>
-
-    <noscript>
-        <div class="noscript-message">
-            JavaScript debe estar habilitado para utilizar LogiTrack.
-        </div>
-    </noscript>
-
-    <script src="js/dashboard.js" defer></script>
-
+  </div>
+  <noscript><p class="iq-noscript">JavaScript debe estar habilitado para utilizar LogiTrack IQ.</p></noscript>
+  <script src="js/app.js" defer></script>
 </body>
 </html>

@@ -1055,7 +1055,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function realizarPeticion(url, opciones) {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         if (!token) {
             limpiarSesion();
@@ -1414,7 +1414,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function verificarAutenticacion() {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         if (!token) {
             limpiarSesion();
@@ -1449,9 +1449,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function limpiarSesion() {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
-        localStorage.removeItem("rol");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("username");
+        sessionStorage.removeItem("rol");
     }
 
     function tokenExpirado(token) {

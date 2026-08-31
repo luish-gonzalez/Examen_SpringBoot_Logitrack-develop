@@ -2403,7 +2403,7 @@ document.addEventListener("DOMContentLoaded", function () {
         opciones
     ) {
         const token =
-            localStorage.getItem("token");
+            sessionStorage.getItem("token");
 
         if (!token) {
             limpiarSesion();
@@ -2863,7 +2863,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const username =
-            localStorage.getItem("username");
+            sessionStorage.getItem("username");
 
         currentUsername.textContent =
             username ||
@@ -2872,7 +2872,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function verificarAutenticacion() {
         const token =
-            localStorage.getItem("token");
+            sessionStorage.getItem("token");
 
         if (!token) {
             limpiarSesion();
@@ -2911,9 +2911,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function limpiarSesion() {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
-        localStorage.removeItem("rol");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("username");
+        sessionStorage.removeItem("rol");
     }
 
     function tokenExpirado(token) {

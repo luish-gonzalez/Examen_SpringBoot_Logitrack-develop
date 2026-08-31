@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('token');
-    const username = localStorage.getItem('username');
-    const rol = (localStorage.getItem('rol') || '').toUpperCase();
+    const token = sessionStorage.getItem('token');
+    const username = sessionStorage.getItem('username');
+    const rol = (sessionStorage.getItem('rol') || '').toUpperCase();
     const currentUsername = document.getElementById('currentUsername');
     const logoutButton = document.getElementById('logoutButton');
     const navUsuarios = document.getElementById('navUsuarios');
@@ -17,9 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (logoutButton) {
         logoutButton.addEventListener('click', () => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('username');
-            localStorage.removeItem('rol');
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('username');
+            sessionStorage.removeItem('rol');
             window.location.href = 'login.html';
         });
     }
