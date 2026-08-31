@@ -18,3 +18,16 @@ conservan como evidencia sin alterar su contenido.
 
 Sigue pendiente una evidencia real separada de error controlado, obtenida sin
 crear ordenes ni publicar resumenes adicionales.
+
+## Error controlado verificado
+
+- Prueba: error controlado.
+- Condicion: MCP detenido temporalmente.
+- Ejecucion: Manual Trigger.
+- Resultado: fallo controlado.
+- Orden nueva: no.
+- Resumen reemplazado: no.
+- BORRADOR final: 1.
+
+La captura real principal es `ejecucion-error-controlado.png`. No se
+inventan detalles visuales adicionales.
